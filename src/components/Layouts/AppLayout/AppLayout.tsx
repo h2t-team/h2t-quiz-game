@@ -4,17 +4,17 @@ import Footer from '../Footer/Footer';
 import Header from '../Header/Header';
 
 interface AppLayoutProps {
-    children: React.ReactNode;
+  children: React.ReactNode;
 }
 
 const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   return (
     <div>
-        <Header />
-        <Container>{children}</Container>
-        <Footer />
+      <Header />
+      <Container>{children}</Container>
+      <Footer />
     </div>
-  )
-}
+  );
+};
 
-export default AppLayout
+export default AppLayout;
