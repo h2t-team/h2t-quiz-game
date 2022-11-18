@@ -1,11 +1,13 @@
 import React from 'react';
-import './App.scss';
-import Loader from './components/Common/Loader/Loader';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import route from './routes';
+import './asset/scss/common.scss';
 
 function App() {
+  const router = createBrowserRouter(route);
   return (
     <div className="App">
-      <Loader />
+      <RouterProvider router={router} />
     </div>
   );
 }

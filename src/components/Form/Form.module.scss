@@ -1,0 +1,20 @@
+@import '../../asset/scss/variables';
+
+.authForm {
+  .formTitle {
+    text-align: center;
+  }
+
+  .formSubmit {
+    width: 100%;
+    padding-block: 10px;
+    border-radius: 50px;
+  }
+
+  .formFooter {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 8px;
+  }
+}
