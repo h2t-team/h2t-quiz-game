@@ -4,6 +4,7 @@ import { RouteObject } from 'react-router-dom';
 import Login from '../components/Form/Login';
 import Loader from '../components/Common/Loader/Loader';
 import AuthLayout from '../components/Layouts/AuthLayout';
+import Register from '../components/Form/Register';
 
 const route: RouteObject[] = [
   {
@@ -16,6 +17,14 @@ const route: RouteObject[] = [
     element: (
       <AuthLayout>
         <Login />
+      </AuthLayout>
+    ),
+  },
+  {
+    path: '/register',
+    element: (
+      <AuthLayout>
+        <Register />
       </AuthLayout>
     ),
   },

@@ -14,7 +14,11 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
           {children}
           <div className={styles.formDivider}>OR</div>
           <div className={styles.formOAuth}>
-            <div className={styles.google}><Button variant="outline-primary w-100 rounded-0">Continue with Google</Button></div>
+            <div className={styles.google}>
+              <Button variant="outline-primary w-100 rounded-0">
+                Continue with Google
+              </Button>
+            </div>
           </div>
         </div>
       </Container>

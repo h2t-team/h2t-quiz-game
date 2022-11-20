@@ -11,6 +11,12 @@ interface IFormInput {
   password: string;
 }
 
+yup.setLocale({
+  mixed: {
+    required: 'This field is required',
+  },
+});
+
 const schema = yup
   .object({
     username: yup.string().required(),
@@ -26,9 +32,6 @@ const Login = () => {
   } = useForm<IFormInput>({
     resolver: yupResolver(schema),
   });
-
-  // eslint-disable-next-line no-console
-  console.log(errors);
 
   const onSubmit: SubmitHandler<IFormInput> = (data) => {
     // eslint-disable-next-line no-console
@@ -62,13 +65,15 @@ const Login = () => {
           <Form.Control.Feedback type="invalid">
             {errors.password?.message}
           </Form.Control.Feedback>
-          <Form.Text><Link to='/forgotpassword'>Fogot password?</Link></Form.Text>
+          <Form.Text>
+            <Link to="/forgotpassword">Fogot password?</Link>
+          </Form.Text>
         </Form.Group>
         <Button type="submit" variant="primary" className={styles.formSubmit}>
           Sign In
         </Button>
         <div className={styles.formFooter}>
-          Not a member? 
+          Not a member?
           <Link to="/register">Sign up now</Link>
         </div>
       </Form>
