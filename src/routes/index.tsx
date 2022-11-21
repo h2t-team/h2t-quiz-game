@@ -1,5 +1,5 @@
 import React from 'react';
-import { RouteObject } from 'react-router-dom';
+import { RouteObject, Navigate } from 'react-router-dom';
 
 import Login from '../components/Form/Login';
 import Loader from '../components/Common/Loader/Loader';
@@ -9,7 +9,7 @@ import Register from '../components/Form/Register';
 const route: RouteObject[] = [
   {
     path: '/',
-    element: <Loader />,
+    element: <Navigate to="/login" />,
     errorElement: <Loader />,
   },
   {
