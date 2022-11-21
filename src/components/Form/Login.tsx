@@ -66,7 +66,7 @@ const Login = () => {
             {errors.password?.message}
           </Form.Control.Feedback>
           <Form.Text>
-            <Link to="/forgotpassword">Fogot password?</Link>
+            <Link to="/forgot-password">Fogot password?</Link>
           </Form.Text>
         </Form.Group>
         <Button type="submit" variant="primary" className={styles.formSubmit}>
