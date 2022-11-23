@@ -10,7 +10,7 @@ export const getItem = (key: string) => {
   try {
     const item = JSON.parse(value);
     const expireIn = item?.expireIn;
-    if (expireIn && new Date(expireIn) > new Date()) {
+    if (expireIn && new Date(expireIn) < new Date()) {
       localStorage.removeItem(key);
       return null;
     }
