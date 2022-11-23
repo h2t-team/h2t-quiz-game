@@ -4,10 +4,11 @@ import { useForm, SubmitHandler } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useMutation } from '@tanstack/react-query';
-import { Col, Form, Button, Row, Alert, Spinner } from 'react-bootstrap';
+import { Col, Form, Button, Row, Alert } from 'react-bootstrap';
 import styles from './Form.module.scss';
 import axios from 'axios';
 import config from '../../config';
+import Loader from '../Common/Loader/Loader';
 
 interface IFormInput {
   username: string;
@@ -65,7 +66,10 @@ const Register = () => {
     },
     onError: (error) => {
       if (axios.isAxiosError(error)) {
-        setErrMsg(error?.response?.data?.message);
+        setErrMsg(
+          error?.response?.data?.message ||
+            'There was a problem with server. Please try again later.'
+        );
       }
     },
   });
@@ -162,7 +166,7 @@ const Register = () => {
           disabled={mutation.isLoading}
         >
           {mutation.isLoading && (
-            <Spinner
+            <Loader
               as="span"
               animation="border"
               size="sm"
