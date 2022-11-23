@@ -1,7 +1,7 @@
 import React from 'react';
 import { Container } from 'react-bootstrap';
 import Footer from '../Footer/Footer';
-import Header from '../Header/Header';
+import Header from '../Header';
 
 interface AppLayoutProps {
   children: React.ReactNode;
