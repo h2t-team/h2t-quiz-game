@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Container } from 'react-bootstrap';
 import Footer from '../Footer/Footer';
 import Header from '../Header';
-import { isLogin } from '../../../utils/auth';
+import { isLogin } from '../../../utils';
 
 interface AppLayoutProps {
   children: React.ReactNode;

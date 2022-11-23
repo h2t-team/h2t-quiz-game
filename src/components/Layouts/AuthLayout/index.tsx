@@ -2,7 +2,7 @@ import React from 'react';
 import { Container, Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import styles from './AuthLayout.module.scss';
-import { isLogin } from '../../../utils/auth';
+import { isLogin } from '../../../utils';
 
 interface AuthLayoutProps {
   children?: React.ReactNode;

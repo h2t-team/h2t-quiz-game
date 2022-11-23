@@ -5,8 +5,9 @@ import { useForm, SubmitHandler } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useMutation } from '@tanstack/react-query';
-import { Form, Button, Alert, Spinner } from 'react-bootstrap';
+import { Form, Button, Alert } from 'react-bootstrap';
 import styles from './Form.module.scss';
+import Loader from '../Common/Loader/Loader';
 import { setItem } from '../../utils/localStorage';
 import config from '../../config';
 
@@ -103,8 +104,9 @@ const Login = () => {
           disabled={mutation.isLoading}
         >
           {mutation.isLoading && (
-            <Spinner
+            <Loader
               as="span"
+              isFullPage={false}
               animation="border"
               size="sm"
               role="status"

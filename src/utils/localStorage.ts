@@ -1,3 +1,5 @@
+import { compareDate } from './date';
+
 export const setItem = (key: string, value: string, expireIn = 0) => {
   const current = new Date(0);
   current.setUTCSeconds(expireIn);
@@ -10,7 +12,7 @@ export const getItem = (key: string) => {
   try {
     const item = JSON.parse(value);
     const expireIn = item?.expireIn;
-    if (expireIn && new Date(expireIn) < new Date()) {
+    if (expireIn && compareDate(new Date(expireIn), new Date()) === -1) {
       localStorage.removeItem(key);
       return null;
     }
