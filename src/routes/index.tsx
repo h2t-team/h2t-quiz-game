@@ -1,37 +1,24 @@
 import React from 'react';
-import { RouteObject, Navigate } from 'react-router-dom';
+import { RouteObject } from 'react-router-dom';
 
-import Login from '../components/Form/Login';
 import Loader from '../components/Common/Loader/Loader';
-import AppLayout from '../components/Layouts/AppLayout/AppLayout';
-import AuthLayout from '../components/Layouts/AuthLayout';
-import Register from '../components/Form/Register';
+import HomePage from '../pages/Home';
+import LoginPage from '../pages/Auth/LoginPage';
+import RegisterPage from '../pages/Auth/RegisterPage';
 
 const route: RouteObject[] = [
   {
     path: '/',
-    element: <Navigate to="/login" />,
-    errorElement: (
-      <AppLayout>
-        <Loader />
-      </AppLayout>
-    ),
+    element: <HomePage />,
+    errorElement: <Loader />,
   },
   {
     path: '/login',
-    element: (
-      <AuthLayout>
-        <Login />
-      </AuthLayout>
-    ),
+    element: <LoginPage />,
   },
   {
     path: '/register',
-    element: (
-      <AuthLayout>
-        <Register />
-      </AuthLayout>
-    ),
+    element: <RegisterPage />,
   },
 ];
 

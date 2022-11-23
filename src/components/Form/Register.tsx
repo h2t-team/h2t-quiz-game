@@ -65,7 +65,10 @@ const Register = () => {
     },
     onError: (error) => {
       if (axios.isAxiosError(error)) {
-        setErrMsg(error?.response?.data?.message);
+        setErrMsg(
+          error?.response?.data?.message ||
+            'There was a problem with server. Please try again later.'
+        );
       }
     },
   });

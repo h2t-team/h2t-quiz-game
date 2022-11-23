@@ -1,10 +1,14 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { Form, Button } from 'react-bootstrap';
+import { useMutation } from '@tanstack/react-query';
+import { Form, Button, Alert, Spinner } from 'react-bootstrap';
 import styles from './Form.module.scss';
+import { setItem } from '../../utils/localStorage';
+import config from '../../config';
 
 interface IFormInput {
   username: string;
@@ -25,6 +29,7 @@ const schema = yup
   .required();
 
 const Login = () => {
+  const [errMsg, setErrMsg] = React.useState('');
   const {
     register,
     handleSubmit,
@@ -33,14 +38,36 @@ const Login = () => {
     resolver: yupResolver(schema),
   });
 
+  const naviagte = useNavigate();
+  const mutation = useMutation({
+    mutationFn: (data: IFormInput) =>
+      axios.post(`${config.apiUrl}/auth/login`, data),
+    onSuccess: (data) => {
+      const token = data.data?.accessToken;
+      const expiry = data.data?.expiresIn;
+      setItem('h2t_access_token', token, expiry);
+      naviagte('/');
+    },
+    onError: (error) => {
+      if (axios.isAxiosError(error)) {
+        setErrMsg(
+          error?.response?.data?.message ||
+            'There was a problem with server. Please try again later.'
+        );
+      }
+    },
+  });
+
   const onSubmit: SubmitHandler<IFormInput> = (data) => {
-    // eslint-disable-next-line no-console
-    console.log(data);
+    mutation.mutate(data);
   };
 
   return (
     <div className={styles.authForm}>
       <h1 className={styles.formTitle}>H2T Quiz</h1>
+      <Alert variant="danger" show={mutation.isError}>
+        {errMsg}
+      </Alert>
       <Form onSubmit={handleSubmit(onSubmit)}>
         <Form.Group className="mb-3">
           <Form.Label>Username</Form.Label>
@@ -69,7 +96,21 @@ const Login = () => {
             <Link to="/forgot-password">Fogot password?</Link>
           </Form.Text>
         </Form.Group>
-        <Button type="submit" variant="primary" className={styles.formSubmit}>
+        <Button
+          type="submit"
+          variant="primary"
+          className={styles.formSubmit}
+          disabled={mutation.isLoading}
+        >
+          {mutation.isLoading && (
+            <Spinner
+              as="span"
+              animation="border"
+              size="sm"
+              role="status"
+              className="me-2"
+            />
+          )}
           Sign In
         </Button>
         <div className={styles.formFooter}>
