@@ -39,7 +39,7 @@ const LoginWithGoogleButton = () => {
     <div className={styles.formOAuth}>
       <div className={styles.google}>
         <Button 
-          variant="outline-primary w-100 rounded-0" 
+          variant="outline-primary w-100 rounded-0 mb-3" 
           disabled={mutation.isLoading}
           onClick = { ()=> googleLogin()}>
           {mutation.isLoading && (
