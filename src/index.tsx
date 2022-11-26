@@ -14,7 +14,7 @@ const root = ReactDOM.createRoot(
 
 root.render(
   <React.StrictMode>
-    <GoogleOAuthProvider clientId={config.googleCliendId} >
+    <GoogleOAuthProvider clientId={config.googleCliendId}>
       <QueryClientProvider client={queryClient}>
         <App />
       </QueryClientProvider>
