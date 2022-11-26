@@ -1,9 +1,9 @@
 import React from 'react';
-import LoginWithGoogleButton from '../../Form/LoginWithGoogleButton';
 import { Container } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import LoginWithGoogleButton from 'components/Form/LoginWithGoogleButton';
+import { isLogin } from 'utils';
 import styles from './AuthLayout.module.scss';
-import { isLogin } from '../../../utils';
 
 interface AuthLayoutProps {
   children?: React.ReactNode;
@@ -23,7 +23,7 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
         <div className={styles.formContainer}>
           {children}
           <div className={styles.formDivider}>OR</div>
-          <LoginWithGoogleButton></LoginWithGoogleButton>
+          <LoginWithGoogleButton />
           {/* <div className={styles.formOAuth}>
             <div className={styles.google}><Button variant="outline-primary w-100 rounded-0">Continue with Google</Button></div>
           </div> */}

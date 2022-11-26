@@ -3,12 +3,12 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
+import axios from 'axios';
 import { useMutation } from '@tanstack/react-query';
 import { Col, Form, Button, Row, Alert } from 'react-bootstrap';
-import styles from './Form.module.scss';
-import axios from 'axios';
-import config from '../../config';
+import config from 'config';
 import Loader from '../Common/Loader/Loader';
+import styles from './Form.module.scss';
 
 interface IFormInput {
   username: string;

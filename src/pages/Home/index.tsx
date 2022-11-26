@@ -1,7 +1,7 @@
 import React from 'react';
-import Loader from '../../components/Common/Loader/Loader';
 
-import AppLayout from '../../components/Layouts/AppLayout/AppLayout';
+import Loader from 'components/Common/Loader/Loader';
+import AppLayout from 'components/Layouts/AppLayout';
 
 const HomePage = () => {
   return (

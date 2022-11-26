@@ -11,7 +11,7 @@ function Header() {
       expand="lg"
       bg="white"
       variant="white"
-      className="shadow-sm"
+      className="shadow-sm p-1"
     >
       <Container>
         <Navbar.Brand as={Link} to="/">
@@ -19,7 +19,7 @@ function Header() {
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
-          <Nav className="mx-auto">
+          <Nav className="me-auto">
             <Nav.Link as={Link} to="/" className="mx-2">
               Home
             </Nav.Link>
@@ -28,10 +28,10 @@ function Header() {
             </Nav.Link>
           </Nav>
           <Nav className="align-items-center">
-            <Link to="/register" className="btn-underline mx-3">
+            <Link to="/register" className="btn btn-success mx-3 fw-bolder">
               Sign up
             </Link>
-            <Link to="/login" className="btn btn-outline-primary rounded-pill px-3">
+            <Link to="/login" className="btn-underline fw-bolder">
               Sign in
             </Link>
           </Nav>

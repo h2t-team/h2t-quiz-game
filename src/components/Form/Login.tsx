@@ -6,10 +6,10 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useMutation } from '@tanstack/react-query';
 import { Form, Button, Alert } from 'react-bootstrap';
-import styles from './Form.module.scss';
 import Loader from '../Common/Loader/Loader';
-import { setItem } from '../../utils/localStorage';
-import config from '../../config';
+import { setItem } from 'utils/localStorage';
+import config from 'config';
+import styles from './Form.module.scss';
 
 interface IFormInput {
   username: string;

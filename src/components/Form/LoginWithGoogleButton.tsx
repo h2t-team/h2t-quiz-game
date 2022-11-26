@@ -1,13 +1,13 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Alert } from 'react-bootstrap';
-import styles from './Form.module.scss';
-import { CodeResponse, useGoogleLogin } from '@react-oauth/google';
 import axios from 'axios';
-import config from '../../config';
+import { CodeResponse, useGoogleLogin } from '@react-oauth/google';
 import { useMutation } from '@tanstack/react-query';
-import { setItem } from '../../utils/localStorage';
+import config from 'config';
+import { setItem } from 'utils/localStorage';
 import Loader from '../Common/Loader/Loader';
+import styles from './Form.module.scss';
 
 const LoginWithGoogleButton = () => {
   const [errMsg, setErrMsg] = React.useState('');

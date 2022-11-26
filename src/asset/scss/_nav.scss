@@ -1,0 +1,9 @@
+@import './button';
+
+.nav-link {
+  @extend .btn-underline;
+
+  padding-inline: 0 !important;
+  padding-bottom: 0;
+  font-weight: 700;
+}

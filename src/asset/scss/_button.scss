@@ -19,6 +19,8 @@
   }
 
   &:hover {
+    color: $primary;
+
     &::after {
       transform: scaleX(1);
       transform-origin: bottom left;

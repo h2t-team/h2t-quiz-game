@@ -1,9 +1,9 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Container } from 'react-bootstrap';
-import Footer from '../Footer/Footer';
+import Footer from '../Footer';
 import Header from '../Header';
-import { isLogin } from '../../../utils';
+import { isLogin } from 'utils';
 
 interface AppLayoutProps {
   children: React.ReactNode;
