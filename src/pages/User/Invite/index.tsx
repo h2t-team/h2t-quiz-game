@@ -7,7 +7,6 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 
 import Loader from 'components/Common/Loader/Loader';
 import { getItem, isLogin, axiosWithToken } from 'utils';
-import config from 'config';
 import styles from './Invite.module.scss';
 
 const Invite = () => {
@@ -21,8 +20,6 @@ const Invite = () => {
       const res = await axiosWithToken.get(`/groups/${groupId}`);
       return res.data;
     },
-    refetchOnWindowFocus: false,
-    retry: false,
   });
 
   React.useEffect(() => {
@@ -60,11 +57,11 @@ const Invite = () => {
       </Link>
     </>
   );
-  
+
   const errorBlock = (
     <>
       <FaTimesCircle color="red" size="50px" />
-      <p className="mt-3 mb-0 fw-bold">Join fail. Please try again later</p>
+      <p className="mt-3 mb-0 fw-bold">Join unsuccessfully.<br/>Please try again later</p>
       <Link to="/" className="btn btn-primary mt-5 w-100">
         Back to home
       </Link>
@@ -86,7 +83,7 @@ const Invite = () => {
     <>
       <FaTimesCircle color="red" size="50px" />
       <p className="mt-3 mb-0 fw-bold">Your invitation link is invalid.</p>
-      <Link to="/" className="btn btn-primary mt-5 w-100">
+      <Link to="/" className="btn btn-primary mt-4 w-100">
         Back to home
       </Link>
     </>
