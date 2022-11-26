@@ -61,8 +61,13 @@ const Register = () => {
   const mutation = useMutation({
     mutationFn: (data: IFormInput) =>
       axios.post(`${config.apiUrl}/auth/register`, data),
-    onSuccess: () => {
-      navigate('/login');
+    onSuccess: (newData) => {
+      navigate('/send-email',{
+        state: {
+          type: 'verification',
+          email: newData.data.user.email,
+        }
+      });
     },
     onError: (error) => {
       if (axios.isAxiosError(error)) {

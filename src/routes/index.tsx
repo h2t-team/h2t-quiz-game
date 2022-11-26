@@ -5,6 +5,7 @@ import Loader from 'components/Common/Loader/Loader';
 import HomePage from 'pages/Home';
 import LoginPage from 'pages/Auth/LoginPage';
 import RegisterPage from 'pages/Auth/RegisterPage';
+import ActivationPage from 'pages/Auth/ActivationPage';
 
 const route: RouteObject[] = [
   {
@@ -19,6 +20,10 @@ const route: RouteObject[] = [
   {
     path: '/register',
     element: <RegisterPage />,
+  },
+  {
+    path: '/send-email',
+    element: <ActivationPage />,
   },
 ];
 
