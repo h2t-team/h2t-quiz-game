@@ -7,6 +7,7 @@ import LoginPage from 'pages/Auth/LoginPage';
 import RegisterPage from 'pages/Auth/RegisterPage';
 import ActivationPage from 'pages/Auth/ActivationPage';
 import SendEmailPage from 'pages/Auth/SendEmailPage';
+import Invite from 'pages/User/Invite';
 
 const route: RouteObject[] = [
   {
@@ -29,6 +30,8 @@ const route: RouteObject[] = [
   {
     path: '/auth/activate-account',
     element: <ActivationPage />,
+    path: '/groups/invite/:groupId',
+    element: <Invite />,
   },
 ];
 

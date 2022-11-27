@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Button, Alert } from 'react-bootstrap';
 import axios from 'axios';
 import { CodeResponse, useGoogleLogin } from '@react-oauth/google';
@@ -11,15 +11,19 @@ import styles from './Form.module.scss';
 
 const LoginWithGoogleButton = () => {
   const [errMsg, setErrMsg] = React.useState('');
-  const naviagte = useNavigate();
+  const navigate = useNavigate();
+  const [search] = useSearchParams();
+  const redirect = search.get('redirect');
   const mutation = useMutation({
     mutationFn: (codeResponse: CodeResponse) =>
-      axios.post(`${config.apiUrl}/auth/login-with-google`, {code:codeResponse.code}),
+      axios.post(`${config.apiUrl}/auth/login-with-google`, {
+        code: codeResponse.code,
+      }),
     onSuccess: (data) => {
       const token = data.data?.accessToken;
       const expiry = data.data?.expiresIn;
       setItem('h2t_access_token', token, expiry);
-      naviagte('/');
+      navigate(redirect || '/');
     },
     onError: (error) => {
       if (axios.isAxiosError(error)) {
@@ -38,10 +42,11 @@ const LoginWithGoogleButton = () => {
   return (
     <div className={styles.formOAuth}>
       <div className={styles.google}>
-        <Button 
-          variant="outline-primary w-100 rounded-0 mb-3" 
+        <Button
+          variant="outline-primary w-100 rounded-0 mb-3"
           disabled={mutation.isLoading}
-          onClick = { ()=> googleLogin()}>
+          onClick={() => googleLogin()}
+        >
           {mutation.isLoading && (
             <Loader
               as="span"

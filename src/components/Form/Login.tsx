@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -40,6 +40,8 @@ const Login = () => {
   });
 
   const naviagte = useNavigate();
+  const [search] = useSearchParams();
+  const redirect = search.get('redirect');
   const mutation = useMutation({
     mutationFn: (data: IFormInput) =>
       axios.post(`${config.apiUrl}/auth/login`, data),
@@ -48,7 +50,7 @@ const Login = () => {
       const expiry = data.data?.expiresIn;
       if (token && expiry) {
         setItem('h2t_access_token', token, expiry);
-        naviagte('/');
+      naviagte(redirect || '/');
       }
       else {
         const type = data.data?.type;
