@@ -6,7 +6,14 @@ import App from './App';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import config from '../src/config';
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: false,
+    },
+  },
+});
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -14,7 +21,7 @@ const root = ReactDOM.createRoot(
 
 root.render(
   <React.StrictMode>
-    <GoogleOAuthProvider clientId={config.googleCliendId} >
+    <GoogleOAuthProvider clientId={config.googleCliendId}>
       <QueryClientProvider client={queryClient}>
         <App />
       </QueryClientProvider>

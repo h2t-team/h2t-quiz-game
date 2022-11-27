@@ -1,6 +1,6 @@
 import React from 'react';
 import { Navbar, Container, Nav } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 
 import logo from '../../../asset/images/logo.svg';
 
@@ -20,10 +20,10 @@ function Header() {
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="me-auto">
-            <Nav.Link as={Link} to="/" className="mx-2">
+            <Nav.Link as={NavLink} to="/" className="mx-2">
               Home
             </Nav.Link>
-            <Nav.Link as={Link} to="/group" className="mx-2">
+            <Nav.Link as={NavLink} to="/group" className="mx-2">
               Group
             </Nav.Link>
           </Nav>
