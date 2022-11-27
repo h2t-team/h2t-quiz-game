@@ -6,6 +6,7 @@ import HomePage from 'pages/Home';
 import LoginPage from 'pages/Auth/LoginPage';
 import RegisterPage from 'pages/Auth/RegisterPage';
 import ActivationPage from 'pages/Auth/ActivationPage';
+import SendEmailPage from 'pages/Auth/SendEmailPage';
 
 const route: RouteObject[] = [
   {
@@ -23,6 +24,10 @@ const route: RouteObject[] = [
   },
   {
     path: '/send-email',
+    element: <SendEmailPage />,
+  },
+  {
+    path: '/auth/activate-account',
     element: <ActivationPage />,
   },
 ];

@@ -64,8 +64,8 @@ const Register = () => {
     onSuccess: (newData) => {
       navigate('/send-email',{
         state: {
-          type: 'verification',
-          email: newData.data.user.email,
+          type: newData.data.type,
+          email: newData.data.email,
         }
       });
     },

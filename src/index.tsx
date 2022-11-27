@@ -13,11 +13,11 @@ const root = ReactDOM.createRoot(
 );
 
 root.render(
-  <React.StrictMode>
-    <GoogleOAuthProvider clientId={config.googleCliendId} >
-      <QueryClientProvider client={queryClient}>
-        <App />
-      </QueryClientProvider>
-    </GoogleOAuthProvider>
-  </React.StrictMode>
+  // <React.StrictMode>
+  <GoogleOAuthProvider clientId={config.googleCliendId}>
+    <QueryClientProvider client={queryClient}>
+      <App />
+    </QueryClientProvider>
+  </GoogleOAuthProvider>
+  // </React.StrictMode>
 );

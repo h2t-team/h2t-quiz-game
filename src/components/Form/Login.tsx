@@ -46,8 +46,20 @@ const Login = () => {
     onSuccess: (data) => {
       const token = data.data?.accessToken;
       const expiry = data.data?.expiresIn;
-      setItem('h2t_access_token', token, expiry);
-      naviagte('/');
+      if (token && expiry) {
+        setItem('h2t_access_token', token, expiry);
+        naviagte('/');
+      }
+      else {
+        const type = data.data?.type;
+        const email = data.data?.email;
+        naviagte('/send-email',{
+          state: {
+            type: type,
+            email: email,
+          }
+        })
+      }
     },
     onError: (error) => {
       if (axios.isAxiosError(error)) {
