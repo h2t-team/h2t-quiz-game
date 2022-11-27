@@ -30,6 +30,8 @@ const route: RouteObject[] = [
   {
     path: '/auth/activate-account',
     element: <ActivationPage />,
+  },
+  {
     path: '/groups/invite/:groupId',
     element: <Invite />,
   },
