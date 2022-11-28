@@ -48,8 +48,16 @@ const Login = () => {
     onSuccess: (data) => {
       const token = data.data?.accessToken;
       const expiry = data.data?.expiresIn;
+      const userId = data.data?.userId;
       setItem('h2t_access_token', token, expiry);
-      naviagte(redirect || '/');
+      setItem('userId', userId, expiry);
+      //when use navigate the axiosWithToken in Invite does not refresh so it still unauthorize
+      //TODO: Find the way to solve this.
+      if(redirect) {
+        window.location.assign(redirect);
+      } else {
+        naviagte('/');
+      }
     },
     onError: (error) => {
       if (axios.isAxiosError(error)) {

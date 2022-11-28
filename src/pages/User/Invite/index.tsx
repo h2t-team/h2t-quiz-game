@@ -1,5 +1,3 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable no-console */
 import React from 'react';
 import { FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
@@ -9,8 +7,19 @@ import Loader from 'components/Common/Loader/Loader';
 import { getItem, isLogin, axiosWithToken } from 'utils';
 import styles from './Invite.module.scss';
 
+interface MutationPayload {
+  userId: string;
+  groupId: string;
+}
+
 const Invite = () => {
   const navigate = useNavigate();
+  React.useEffect(() => {
+    if (!isLogin()) {
+      const redirectUrl = `/login?redirect=${location.pathname}`;
+      navigate(redirectUrl);
+    }
+  }, []);
   const location = useLocation();
   const params = useParams();
   const groupId = params.groupId;
@@ -22,18 +31,22 @@ const Invite = () => {
     },
   });
 
-  React.useEffect(() => {
-    if (!isLogin()) {
-      const redirectUrl = `/login?redirect=${location.pathname}`;
-      navigate(redirectUrl);
-    }
-  }, []);
+  const mutation = useMutation({
+    mutationFn: ({ userId, groupId }: MutationPayload) => {
+      const postData = {
+        groupId,
+        memberIdList: [userId],
+      };
+      return axiosWithToken.post(`/groups/${groupId}/addUsers`, postData);
+    },
+  });
 
   React.useEffect(() => {
     if (groupInfo.isSuccess) {
-      console.log(params.groupId);
-      console.log(getItem('h2t_access_token'));
-      //TODO: implement invite api
+      mutation.mutate({
+        userId: getItem('userId') as string,
+        groupId: params.groupId as string
+      })
     }
   }, [groupInfo.isSuccess]);
 
@@ -61,7 +74,11 @@ const Invite = () => {
   const errorBlock = (
     <>
       <FaTimesCircle color="red" size="50px" />
-      <p className="mt-3 mb-0 fw-bold">Join unsuccessfully.<br/>Please try again later</p>
+      <p className="mt-3 mb-0 fw-bold">
+        Join unsuccessfully.
+        <br />
+        Please try again later
+      </p>
       <Link to="/" className="btn btn-primary mt-5 w-100">
         Back to home
       </Link>
@@ -73,8 +90,11 @@ const Invite = () => {
       <p className="fw-semibold">You are invited to join group:</p>
       <h1 className="fw-bolder">{groupInfo.data?.group?.name}</h1>
       <div className="mt-auto">
-        {/*TODO: implement call add to Group API*/}
-        {groupInfo.isSuccess ? pendingBlock : successBlock}
+        {mutation.isSuccess
+          ? successBlock
+          : mutation.isError
+            ? errorBlock
+            : pendingBlock}
       </div>
     </>
   );
