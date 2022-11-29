@@ -6,6 +6,7 @@ import HomePage from 'pages/Home';
 import LoginPage from 'pages/Auth/LoginPage';
 import RegisterPage from 'pages/Auth/RegisterPage';
 import Invite from 'pages/User/Invite';
+import ProfilePage from 'pages/User/Profile';
 
 const route: RouteObject[] = [
   {
@@ -24,6 +25,10 @@ const route: RouteObject[] = [
   {
     path: '/groups/invite/:groupId',
     element: <Invite />,
+  },
+  {
+    path: '/profile',
+    element: <ProfilePage />,
   },
 ];
 
