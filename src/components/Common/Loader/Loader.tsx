@@ -6,11 +6,7 @@ interface LoaderProps extends SpinnerProps {
   width?: string;
 }
 
-const Loader: React.FC<LoaderProps> = ({
-  isFullPage,
-  width,
-  ...props
-}) => {
+const Loader: React.FC<LoaderProps> = ({ isFullPage, width, ...props }) => {
   const style = { width: width, height: width };
   if (isFullPage) {
     <Container>

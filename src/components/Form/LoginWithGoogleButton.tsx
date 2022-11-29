@@ -22,8 +22,15 @@ const LoginWithGoogleButton = () => {
     onSuccess: (data) => {
       const token = data.data?.accessToken;
       const expiry = data.data?.expiresIn;
+      const userId = data.data?.userId;
       setItem('h2t_access_token', token, expiry);
-      navigate(redirect || '/');
+      setItem('userId', userId, expiry);
+      //Same issue with login
+      if(redirect) {
+        window.location.assign(redirect);
+      } else {
+        navigate('/');
+      }
     },
     onError: (error) => {
       if (axios.isAxiosError(error)) {
