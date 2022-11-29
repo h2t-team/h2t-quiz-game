@@ -30,13 +30,12 @@ const ActivationPage = () => {
   });
   const postMutation = useMutation({
     mutationFn: (data: string) =>
-      axios.post(`${config.apiUrl}/auth/resend-email`, {token: data}),
+      axios.post(`${config.apiUrl}/auth/resend-email`, { token: data }),
     onSuccess: (newData) => {
-      navigate('/send-email',{
+      navigate('/send-email', {
         state: {
-          type: 'activation',
           email: newData.data.email,
-        }
+        },
       });
     },
     onError: (error) => {
@@ -55,8 +54,7 @@ const ActivationPage = () => {
     if (params.has('token')) {
       const token = params.get('token');
       getMutation.mutate(token || '');
-    }
-    else {
+    } else {
       setMessage('Invalid Token');
       setResult(false);
     }
@@ -68,8 +66,7 @@ const ActivationPage = () => {
     if (params.has('token')) {
       const token = params.get('token');
       postMutation.mutate(token || '');
-    }
-    else {
+    } else {
       setMessage('Invalid Token');
       setResult(false);
     }
@@ -95,7 +92,7 @@ const ActivationPage = () => {
           onClick={handleAnchorClick}
           href="/"
           className="fw-bold text-decoration-underline"
-          id="resend">
+        >
           Resend
         </a>
       </>

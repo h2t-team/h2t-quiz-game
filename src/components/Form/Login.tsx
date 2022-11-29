@@ -50,17 +50,14 @@ const Login = () => {
       const expiry = data.data?.expiresIn;
       if (token && expiry) {
         setItem('h2t_access_token', token, expiry);
-      naviagte(redirect || '/');
-      }
-      else {
-        const type = data.data?.type;
+        naviagte(redirect || '/');
+      } else {
         const email = data.data?.email;
-        naviagte('/send-email',{
+        naviagte('/send-email', {
           state: {
-            type: type,
             email: email,
-          }
-        })
+          },
+        });
       }
     },
     onError: (error) => {
