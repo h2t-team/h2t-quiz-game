@@ -49,14 +49,23 @@ const Login = () => {
       const token = data.data?.accessToken;
       const expiry = data.data?.expiresIn;
       const userId = data.data?.userId;
-      setItem('h2t_access_token', token, expiry);
-      setItem('userId', userId, expiry);
-      //when use navigate the axiosWithToken in Invite does not refresh so it still unauthorize
-      //TODO: Find the way to solve this.
-      if(redirect) {
-        window.location.assign(redirect);
+      if (token && expiry) {
+        setItem('userId', userId, expiry);
+        setItem('h2t_access_token', token, expiry);
+        //when use navigate the axiosWithToken in Invite does not refresh so it still unauthorize
+        //TODO: Find the way to solve this.
+        if(redirect) {
+          window.location.assign(redirect);
+        } else {
+          naviagte('/');
+        }
       } else {
-        naviagte('/');
+        const email = data.data?.email;
+        naviagte('/send-email', {
+          state: {
+            email: email,
+          },
+        });
       }
     },
     onError: (error) => {
