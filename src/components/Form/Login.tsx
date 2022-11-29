@@ -48,8 +48,17 @@ const Login = () => {
     onSuccess: (data) => {
       const token = data.data?.accessToken;
       const expiry = data.data?.expiresIn;
-      setItem('h2t_access_token', token, expiry);
-      naviagte(redirect || '/');
+      if (token && expiry) {
+        setItem('h2t_access_token', token, expiry);
+        naviagte(redirect || '/');
+      } else {
+        const email = data.data?.email;
+        naviagte('/send-email', {
+          state: {
+            email: email,
+          },
+        });
+      }
     },
     onError: (error) => {
       if (axios.isAxiosError(error)) {
