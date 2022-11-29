@@ -79,7 +79,7 @@ const Invite = () => {
         <br />
         Please try again later
       </p>
-      <Link to="/" className="btn btn-primary mt-5 w-100">
+      <Link to="/" className="btn btn-primary mt-3 w-100">
         Back to home
       </Link>
     </>
