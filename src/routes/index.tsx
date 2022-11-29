@@ -8,6 +8,7 @@ import RegisterPage from 'pages/Auth/RegisterPage';
 import ActivationPage from 'pages/Auth/ActivationPage';
 import SendEmailPage from 'pages/Auth/SendEmailPage';
 import Invite from 'pages/User/Invite';
+import ProfilePage from 'pages/User/Profile';
 
 const route: RouteObject[] = [
   {
@@ -34,6 +35,10 @@ const route: RouteObject[] = [
   {
     path: '/groups/invite/:groupId',
     element: <Invite />,
+  },
+  {
+    path: '/profile',
+    element: <ProfilePage />,
   },
 ];
 
