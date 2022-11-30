@@ -5,6 +5,7 @@ import App from './App';
 
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import config from '../src/config';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -24,6 +25,7 @@ root.render(
     <GoogleOAuthProvider clientId={config.googleCliendId}>
       <QueryClientProvider client={queryClient}>
         <App />
+        <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
     </GoogleOAuthProvider>
   </React.StrictMode>
