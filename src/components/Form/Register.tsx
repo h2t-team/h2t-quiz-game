@@ -35,6 +35,7 @@ const schema = yup
     email: yup.string().required().email('Email is invalid'),
     phone: yup
       .string()
+      .min(10, 'Phone number is invalid')
       .matches(
         new RegExp('^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-s./0-9]*$'),
         'Phone number is invalid'
