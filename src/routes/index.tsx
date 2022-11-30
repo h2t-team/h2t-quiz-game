@@ -1,14 +1,17 @@
 import React from 'react';
 import { RouteObject } from 'react-router-dom';
-
-import Loader from 'components/Common/Loader/Loader';
-import HomePage from 'pages/Home';
-import LoginPage from 'pages/Auth/LoginPage';
-import RegisterPage from 'pages/Auth/RegisterPage';
 import ActivationPage from 'pages/Auth/ActivationPage';
 import SendEmailPage from 'pages/Auth/SendEmailPage';
 import Invite from 'pages/User/Invite';
 import ProfilePage from 'pages/User/Profile';
+import { Loader } from 'components/Common';
+import {
+  GroupDetailPage,
+  GroupPage,
+  HomePage,
+  LoginPage,
+  RegisterPage,
+} from 'pages';
 
 const route: RouteObject[] = [
   {
@@ -39,6 +42,14 @@ const route: RouteObject[] = [
   {
     path: '/profile',
     element: <ProfilePage />,
+  }, 
+  {
+    path: '/groups',
+    element: <GroupPage />,
+  },
+  {
+    path: '/groups/:groupId',
+    element: <GroupDetailPage />,
   },
 ];
 

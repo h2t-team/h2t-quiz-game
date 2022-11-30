@@ -1,15 +1,16 @@
 import React from 'react';
-import { Navbar, Container, Nav } from 'react-bootstrap';
+import { Navbar, Container, Nav, NavDropdown } from 'react-bootstrap';
 import { Link, NavLink } from 'react-router-dom';
 
-import logo from '../../../asset/images/logo.svg';
+import logo from 'asset/images/logo.svg';
+import { isLogin } from 'utils';
 
 function Header() {
   return (
     <Navbar
       collapseOnSelect
       expand="lg"
-      bg="white"
+      bg="light"
       variant="white"
       className="shadow-sm p-1"
     >
@@ -23,18 +24,31 @@ function Header() {
             <Nav.Link as={NavLink} to="/" className="mx-2">
               Home
             </Nav.Link>
-            <Nav.Link as={NavLink} to="/group" className="mx-2">
+            <Nav.Link as={NavLink} to="/groups" className="mx-2">
               Group
             </Nav.Link>
           </Nav>
-          <Nav className="align-items-center">
-            <Link to="/register" className="btn btn-success mx-3 fw-bolder">
-              Sign up
-            </Link>
-            <Link to="/login" className="btn-underline fw-bolder">
-              Sign in
-            </Link>
-          </Nav>
+          {isLogin() ? (
+            <NavDropdown
+              title="Username"
+              id="navbarScrollingDropdown"
+              className="mx-2"
+              key="down-centered"
+            >
+              <NavDropdown.Item href="/user">Profile</NavDropdown.Item>
+              <NavDropdown.Divider />
+              <NavDropdown.Item>Sign out</NavDropdown.Item>
+            </NavDropdown>
+          ) : (
+            <Nav className="align-items-center">
+              <Link to="/register" className="btn btn-success mx-3 fw-bolder">
+                Sign up
+              </Link>
+              <Link to="/login" className="btn-underline fw-bolder">
+                Sign in
+              </Link>
+            </Nav>
+          )}
         </Navbar.Collapse>
       </Container>
     </Navbar>

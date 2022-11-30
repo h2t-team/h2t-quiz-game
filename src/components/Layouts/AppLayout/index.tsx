@@ -4,6 +4,7 @@ import { Container } from 'react-bootstrap';
 import Footer from '../Footer';
 import Header from '../Header';
 import { isLogin } from 'utils';
+import styles from './AppLayout.module.scss';
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -18,9 +19,9 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   }, []);
 
   return (
-    <div>
+    <div className={styles.container}>
       <Header />
-      <Container>{children}</Container>
+      <Container className="py-5">{children}</Container>
       <Footer />
     </div>
   );

@@ -1,4 +1,30 @@
-$primary: #47178f;
-$dark: #2c005f;
+// colors
+$red: #e21b3c;
+
+$blue: #1368ce;
+
+$green: #26890c;
+
+$yellow: #d89e00;
+
+$gray: #f2f2f2;
+
+$purple: #47178f;
+$dark-purple: #2c005f;
+
+$black: #333;
+
+$white: #fff;
+
+// Theming colors
+$primary: $purple;
+$secondary: $gray;
+$success: $green;
+$info: $blue;
+$warning: $yellow;
+$danger: $red;
+$light: $white;
+$dark: $dark-purple;
+
 @import '~bootstrap/scss/functions';
 @import '~bootstrap/scss/variables';
