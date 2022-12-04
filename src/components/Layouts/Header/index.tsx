@@ -1,11 +1,17 @@
 import React from 'react';
 import { Navbar, Container, Nav, NavDropdown } from 'react-bootstrap';
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 
 import logo from 'asset/images/logo.svg';
-import { isLogin } from 'utils';
+import { isLogin, clearItem } from 'utils';
 
 function Header() {
+  const navigate = useNavigate();
+  const handleSignOut = () => {
+    clearItem('h2t_access_token');
+    navigate('/login');
+  };
+
   return (
     <Navbar
       collapseOnSelect
@@ -35,9 +41,11 @@ function Header() {
               className="mx-2"
               key="down-centered"
             >
-              <NavDropdown.Item href="/user">Profile</NavDropdown.Item>
+              <NavDropdown.Item href="/profile">Profile</NavDropdown.Item>
               <NavDropdown.Divider />
-              <NavDropdown.Item>Sign out</NavDropdown.Item>
+              <NavDropdown.Item onClick={handleSignOut}>
+                Sign out
+              </NavDropdown.Item>
             </NavDropdown>
           ) : (
             <Nav className="align-items-center">
