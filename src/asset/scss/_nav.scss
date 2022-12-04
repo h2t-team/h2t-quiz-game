@@ -1,0 +1,12 @@
+@import './button';
+
+.nav-link {
+  @extend .btn-underline;
+
+  padding: 0 !important;
+  font-weight: 700;
+
+  &.active {
+    color: $primary !important;
+  }
+}

@@ -1,20 +1,20 @@
 import React from 'react';
 import { Spinner, SpinnerProps, Container } from 'react-bootstrap';
 
-interface LoaderProps {
-  children?: React.ReactNode;
+interface LoaderProps extends SpinnerProps {
   isFullPage?: boolean;
-  size?: SpinnerProps['size'];
+  width?: string;
 }
 
-const Loader: React.FC<LoaderProps> = ({ isFullPage, size }) => {
+const Loader: React.FC<LoaderProps> = ({ isFullPage, width, ...props }) => {
+  const style = { width: width, height: width };
   if (isFullPage) {
     <Container>
-      <Spinner />
+      <Spinner {...props} style={style} />
     </Container>;
   }
 
-  return <Spinner size={size} />;
+  return <Spinner {...props} style={style} />;
 };
 
 export default React.memo(Loader);

@@ -3,11 +3,12 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { useMutation } from '@tanstack/react-query';
-import { Col, Form, Button, Row, Alert, Spinner } from 'react-bootstrap';
-import styles from './Form.module.scss';
 import axios from 'axios';
-import config from '../../config';
+import { useMutation } from '@tanstack/react-query';
+import { Col, Form, Button, Row, Alert } from 'react-bootstrap';
+import config from 'config';
+import Loader from '../Common/Loader/Loader';
+import styles from './Form.module.scss';
 
 interface IFormInput {
   username: string;
@@ -34,6 +35,7 @@ const schema = yup
     email: yup.string().required().email('Email is invalid'),
     phone: yup
       .string()
+      .min(10, 'Phone number is invalid')
       .matches(
         new RegExp('^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-s./0-9]*$'),
         'Phone number is invalid'
@@ -60,12 +62,19 @@ const Register = () => {
   const mutation = useMutation({
     mutationFn: (data: IFormInput) =>
       axios.post(`${config.apiUrl}/auth/register`, data),
-    onSuccess: () => {
-      navigate('/login');
+    onSuccess: (newData) => {
+      navigate('/send-email', {
+        state: {
+          email: newData.data.email,
+        },
+      });
     },
     onError: (error) => {
       if (axios.isAxiosError(error)) {
-        setErrMsg(error?.response?.data?.message);
+        setErrMsg(
+          error?.response?.data?.message ||
+            'There was a problem with server. Please try again later.'
+        );
       }
     },
   });
@@ -162,7 +171,7 @@ const Register = () => {
           disabled={mutation.isLoading}
         >
           {mutation.isLoading && (
-            <Spinner
+            <Loader
               as="span"
               animation="border"
               size="sm"
