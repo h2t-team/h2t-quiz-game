@@ -45,8 +45,8 @@ const Invite = () => {
     if (groupInfo.isSuccess) {
       mutation.mutate({
         userId: getItem('userId') as string,
-        groupId: params.groupId as string
-      })
+        groupId: params.groupId as string,
+      });
     }
   }, [groupInfo.isSuccess]);
 
@@ -90,11 +90,9 @@ const Invite = () => {
       <p className="fw-semibold">You are invited to join group:</p>
       <h1 className="fw-bolder">{groupInfo.data?.group?.name}</h1>
       <div className="mt-auto">
-        {mutation.isSuccess
-          ? successBlock
-          : mutation.isError
-            ? errorBlock
-            : pendingBlock}
+        {mutation.isSuccess ? successBlock
+          : mutation.isError ? 
+            errorBlock : pendingBlock}
       </div>
     </>
   );

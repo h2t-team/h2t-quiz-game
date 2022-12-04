@@ -42,7 +42,7 @@ const route: RouteObject[] = [
   {
     path: '/profile',
     element: <ProfilePage />,
-  }, 
+  },
   {
     path: '/groups',
     element: <GroupPage />,

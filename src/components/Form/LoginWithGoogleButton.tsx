@@ -26,7 +26,7 @@ const LoginWithGoogleButton = () => {
       setItem('h2t_access_token', token, expiry);
       setItem('userId', userId, expiry);
       //Same issue with login
-      if(redirect) {
+      if (redirect) {
         window.location.assign(redirect);
       } else {
         navigate('/');

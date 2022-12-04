@@ -11,14 +11,17 @@ const GroupItem: React.FC<GroupItemProps> = ({ data }) => {
 
   const navigateToGroup = () => {
     navigate(`/groups/${data.group.id}`);
-  };  
+  };
 
   return (
     <Card border="primary">
       <Card.Body>
         <Card.Title className="fs-2">{data.group.name}</Card.Title>
+        <Card.Text>Owner: {data.group.ownerUser.fullname}</Card.Text>
         <Card.Text>Role: {data.role}</Card.Text>
-        <Button variant="primary" onClick={navigateToGroup}>Go to group</Button>
+        <Button variant="primary" onClick={navigateToGroup}>
+          Go to group
+        </Button>
       </Card.Body>
     </Card>
   );

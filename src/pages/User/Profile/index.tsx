@@ -1,6 +1,6 @@
-import React from 'react'
-import AppLayout from 'components/Layouts/AppLayout'
-import Profile from 'components/Form/Profile'
+import React from 'react';
+import AppLayout from 'components/Layouts/AppLayout';
+import Profile from 'components/Form/Profile';
 
 const ProfilePage = () => {
   return (
@@ -9,7 +9,7 @@ const ProfilePage = () => {
         <Profile />
       </div>
     </AppLayout>
-  )
-}
+  );
+};
 
-export default ProfilePage
+export default ProfilePage;

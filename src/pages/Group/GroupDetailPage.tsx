@@ -19,11 +19,11 @@ function GroupDetailPage() {
 
   const handleCloseModal = () => {
     setIsShowModal(false);
-  }
+  };
 
   const handleAddUser = () => {
     handleCloseModal();
-  }
+  };
 
   React.useEffect(() => {
     if (!isLogin()) {
@@ -33,7 +33,7 @@ function GroupDetailPage() {
   }, []);
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ['groupList'],
+    queryKey: ['groupDetail'],
     queryFn: async () => {
       const res = await axios.get(`${config.apiUrl}/groups/${groupId}`, {
         headers: {
@@ -62,10 +62,27 @@ function GroupDetailPage() {
       </Stack>
       <p>Owner: {data.group.ownerUser.fullname}</p>
       <p>Members: </p>
-      {data.group.userInGroups.map((userInfo: { user: { fullname: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | React.ReactFragment | React.ReactPortal | null | undefined; }; }) => 
-        <>
-          <p>{userInfo.user.fullname}</p>
-        </>
+      {data.group.userInGroups.map(
+        (userInfo: {
+          user: {
+            fullname:
+              | string
+              | number
+              | boolean
+              | React.ReactElement<
+                  any,
+                  string | React.JSXElementConstructor<any>
+                >
+              | React.ReactFragment
+              | React.ReactPortal
+              | null
+              | undefined;
+          };
+        }) => (
+          <>
+            <p>{userInfo.user.fullname}</p>
+          </>
+        )
       )}
       {/* TODO: Extract Modal to Common */}
       <Modal
@@ -76,21 +93,27 @@ function GroupDetailPage() {
         onHide={handleCloseModal}
       >
         <Modal.Header closeButton>
-          <Modal.Title id="add-user-group">
-          Add a user
-          </Modal.Title>
+          <Modal.Title id="add-user-group">Add a user</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form>
             <Form.Group className="mb-3">
               <Form.Label>Invite the user to add:</Form.Label>
-              <Form.Control type="email" placeholder="Example: abc123@gmail.com" required />
+              <Form.Control
+                type="email"
+                placeholder="Example: abc123@gmail.com"
+                required
+              />
             </Form.Group>
           </Form>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseModal}>Cancel</Button>
-          <Button variant="primary" onClick={handleAddUser}>Add</Button>
+          <Button variant="secondary" onClick={handleCloseModal}>
+            Cancel
+          </Button>
+          <Button variant="primary" onClick={handleAddUser}>
+            Add
+          </Button>
         </Modal.Footer>
       </Modal>
     </AppLayout>

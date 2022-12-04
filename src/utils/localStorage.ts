@@ -22,3 +22,11 @@ export const getItem = (key: string) => {
     return value;
   }
 };
+
+export const clearItem = (key: string) => {
+  const value = localStorage.getItem(key);
+
+  if (value) {
+    localStorage.removeItem(key);
+  }
+};

@@ -38,7 +38,7 @@ const GroupPage = () => {
 
   const handleCloseModal = () => {
     setIsShowModal(false);
-  }
+  };
 
   const handleCreateNewGroup = () => {
     handleCloseModal();
@@ -49,9 +49,7 @@ const GroupPage = () => {
   }
 
   if (isError) {
-    <AppLayout>
-      Error
-    </AppLayout>
+    <AppLayout>Error</AppLayout>;
   }
 
   return (
@@ -72,9 +70,7 @@ const GroupPage = () => {
         onHide={handleCloseModal}
       >
         <Modal.Header closeButton>
-          <Modal.Title id="create-group">
-          Create new group
-          </Modal.Title>
+          <Modal.Title id="create-group">Create new group</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form onSubmit={handleCreateNewGroup}>
@@ -89,8 +85,12 @@ const GroupPage = () => {
           </Form>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseModal}>Cancel</Button>
-          <Button variant="primary" onClick={handleCreateNewGroup}>Create</Button>
+          <Button variant="secondary" onClick={handleCloseModal}>
+            Cancel
+          </Button>
+          <Button variant="primary" onClick={handleCreateNewGroup}>
+            Create
+          </Button>
         </Modal.Footer>
       </Modal>
     </AppLayout>
