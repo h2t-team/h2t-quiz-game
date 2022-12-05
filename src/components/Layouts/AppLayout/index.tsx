@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Container } from 'react-bootstrap';
+import { Container, Stack } from 'react-bootstrap';
 import Footer from '../Footer';
 import Header from '../Header';
 import { isLogin } from 'utils';
@@ -19,11 +19,13 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   }, []);
 
   return (
-    <div className={styles.container}>
+    <Stack direction="vertical" className={styles.container}>
       <Header />
-      <Container className="py-5">{children}</Container>
+      <Container className="py-5 flex-grow-1 d-flex flex-column">
+        {children}
+      </Container>
       <Footer />
-    </div>
+    </Stack>
   );
 };
 

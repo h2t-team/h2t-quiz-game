@@ -41,7 +41,9 @@ function Header() {
               className="mx-2"
               key="down-centered"
             >
-              <NavDropdown.Item href="/profile">Profile</NavDropdown.Item>
+              <NavDropdown.Item as={NavLink} to="/profile">
+                Profile
+              </NavDropdown.Item>
               <NavDropdown.Divider />
               <NavDropdown.Item onClick={handleSignOut}>
                 Sign out
