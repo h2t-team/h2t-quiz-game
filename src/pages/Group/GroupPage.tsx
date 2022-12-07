@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { AppLayout } from 'components/Layouts';
 import { GroupList } from 'components/Group';
 import axios from 'axios';
@@ -9,9 +9,10 @@ import { Group } from 'models';
 import { Button, Form, Modal, Stack } from 'react-bootstrap';
 import { Loader } from 'components/Common';
 import { useNavigate } from 'react-router-dom';
+import { useModal } from 'hooks';
 
 const GroupPage = () => {
-  const [isShowModal, setIsShowModal] = useState(false);
+  const { closeModal, openModal, isShowModal } = useModal();
   const navigate = useNavigate();
   React.useEffect(() => {
     if (!isLogin()) {
@@ -32,16 +33,8 @@ const GroupPage = () => {
     },
   });
 
-  const handleOpenModal = () => {
-    setIsShowModal(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsShowModal(false);
-  };
-
   const handleCreateNewGroup = () => {
-    handleCloseModal();
+    closeModal();
   };
 
   if (isLoading) {
@@ -60,7 +53,7 @@ const GroupPage = () => {
     <AppLayout>
       <h1 className="fw-bold">All groups</h1>
       <Stack direction="horizontal" className="justify-content-end">
-        <Button variant="info" onClick={handleOpenModal} className="mb-4">
+        <Button variant="info" onClick={openModal} className="mb-4">
           New group
         </Button>
       </Stack>
@@ -71,7 +64,7 @@ const GroupPage = () => {
         aria-labelledby="create-group"
         centered
         show={isShowModal}
-        onHide={handleCloseModal}
+        onHide={closeModal}
       >
         <Modal.Header closeButton>
           <Modal.Title id="create-group">Create new group</Modal.Title>
@@ -89,7 +82,7 @@ const GroupPage = () => {
           </Form>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseModal}>
+          <Button variant="secondary" onClick={closeModal}>
             Cancel
           </Button>
           <Button variant="primary" onClick={handleCreateNewGroup}>

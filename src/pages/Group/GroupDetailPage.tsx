@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { AppLayout } from 'components/Layouts';
 import axios from 'axios';
 import config from 'config';
@@ -7,22 +7,15 @@ import { useQuery } from '@tanstack/react-query';
 import { Loader } from 'components/Common';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Stack, Button, Modal, Form } from 'react-bootstrap';
+import { useModal } from 'hooks';
 
 function GroupDetailPage() {
-  const [isShowModal, setIsShowModal] = useState(false);
+  const { closeModal, openModal, isShowModal } = useModal();
   const { groupId } = useParams();
   const navigate = useNavigate();
 
-  const handleOpenModal = () => {
-    setIsShowModal(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsShowModal(false);
-  };
-
   const handleAddUser = () => {
-    handleCloseModal();
+    closeModal();
   };
 
   React.useEffect(() => {
@@ -60,7 +53,7 @@ function GroupDetailPage() {
     <AppLayout>
       <h1 className="fw-bold">{data.group.name}</h1>
       <Stack direction="horizontal" className="justify-content-end">
-        <Button variant="info" onClick={handleOpenModal} className="mb-4">
+        <Button variant="info" onClick={openModal} className="mb-4">
           Add user
         </Button>
       </Stack>
@@ -94,7 +87,7 @@ function GroupDetailPage() {
         aria-labelledby="create-group"
         centered
         show={isShowModal}
-        onHide={handleCloseModal}
+        onHide={closeModal}
       >
         <Modal.Header closeButton>
           <Modal.Title id="add-user-group">Add a user</Modal.Title>
@@ -112,7 +105,7 @@ function GroupDetailPage() {
           </Form>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseModal}>
+          <Button variant="secondary" onClick={closeModal}>
             Cancel
           </Button>
           <Button variant="primary" onClick={handleAddUser}>
