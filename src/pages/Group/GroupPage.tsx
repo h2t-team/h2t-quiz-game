@@ -45,7 +45,11 @@ const GroupPage = () => {
   };
 
   if (isLoading) {
-    return <Loader isFullPage />;
+    return (
+      <AppLayout>
+        <Loader isFullPage />;
+      </AppLayout>
+    );
   }
 
   if (isError) {

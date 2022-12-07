@@ -1,23 +1,23 @@
 import React from 'react';
 import { RouteObject } from 'react-router-dom';
-import ActivationPage from 'pages/Auth/ActivationPage';
-import SendEmailPage from 'pages/Auth/SendEmailPage';
-import Invite from 'pages/User/Invite';
-import ProfilePage from 'pages/User/Profile';
-import { Loader } from 'components/Common';
 import {
+  ActivationPage,
   GroupDetailPage,
   GroupPage,
   HomePage,
+  Invite,
   LoginPage,
+  NotFoundPage,
+  ProfilePage,
   RegisterPage,
+  SendEmailPage,
 } from 'pages';
 
 const route: RouteObject[] = [
   {
     path: '/',
     element: <HomePage />,
-    errorElement: <Loader />,
+    errorElement: <NotFoundPage />,
   },
   {
     path: '/login',
