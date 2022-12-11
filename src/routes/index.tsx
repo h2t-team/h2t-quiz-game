@@ -16,8 +16,20 @@ import {
   Result,
   Answer,
   SlideShow,
+  PresentationDetailPage,
 } from 'pages';
 import PrivateRoute from 'components/PrivateRoute/PrivateRoute';
+
+const editPresentationRouteList = [
+  '/presentations/:presentationId/edit',
+  '/presentations/:presentationId/:slideId/edit',
+].map(path => ({
+  path, 
+  element: 
+    <PrivateRoute>
+      <PresentationDetailPage />
+    </PrivateRoute>
+}));
 
 const route: RouteObject[] = [
   {
@@ -99,6 +111,7 @@ const route: RouteObject[] = [
     path: '/:presentId/:slideId/answer',
     element: <Answer />,
   },
+  ...editPresentationRouteList,
 ];
 
 export default route;
