@@ -1,0 +1,83 @@
+@import '../../../asset/scss/color';
+@import '../../../asset/scss/font';
+
+.joinGamePage {
+  height: 100vh;
+  background-color: $background-color-blue;
+  animation: home-background 14s ease 0s infinite alternate none running;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin-inline: auto;
+}
+
+@keyframes home-background {
+  25% {background: $background-transition-color-blue;}
+  50% {  background: $background-transition-color-green;}
+  75% {background: $background-transition-color-yellow;}
+  100% {background: $background-transition-color-orange;}
+}
+
+.mainTitle {
+  color: $color-white;
+  font-family: $main-logo;
+  font-size: 10rem;
+  text-align: center;
+  padding-bottom: 1rem;
+  margin: 0 auto;
+  min-width: 10rem;
+}
+
+.verticalMainForm {
+  font-family: $main-logo;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+}
+
+.input {
+  max-width: 25.5rem !important;
+  margin: 1rem 0;
+  position: relative;
+  background-color: white;
+  border: 2px solid #ced4da;
+  text-align:center;
+  font-weight: bold;
+  font-size: 16;
+  padding: 10px;
+  box-shadow: 0 1px 2px #ced4da;
+  transition: box-shadow 0.3s ease-in-out;
+}
+
+.formSubmit {
+  font-size: 1.6rem;
+  text-align: center;
+  font-weight: bold;
+  margin: 1rem 0;
+}
+
+.error {
+  display: table-cell;
+  background-color: $color-red;
+  color: $color-white;
+  border-radius: 0.4rem;
+  vertical-align: middle;
+  text-align: center;
+  padding: 1rem 0.5rem;
+  font-size: 1.6rem;
+  font-weight: bold;
+  min-height: 6rem;
+  margin-top: 2rem;
+}
+
+.enterBtn > span {
+  margin: 0 auto;
+}
+
+.createQuiz, .hostQuiz {
+  color: $color-white;
+  font-size: 2rem;
+  margin: 1rem 0;
+}

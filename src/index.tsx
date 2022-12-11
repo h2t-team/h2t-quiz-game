@@ -7,6 +7,8 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 import config from '../src/config';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
+import 'typeface-acme';
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {

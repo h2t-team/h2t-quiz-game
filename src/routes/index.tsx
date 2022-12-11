@@ -12,6 +12,8 @@ import {
   RegisterPage,
   SendEmailPage,
   PresentationPage,
+  JoinGame,
+  Instructions,
 } from 'pages';
 import PrivateRoute from 'components/PrivateRoute/PrivateRoute';
 
@@ -77,6 +79,18 @@ const route: RouteObject[] = [
       </PrivateRoute>
     ),
   },
+  {
+    path: '/join-game',
+    element: (
+      <JoinGame />
+    ),
+  },
+  {
+    path: '/instructions',
+    element: (
+      <Instructions />
+    ),
+  }
 ];
 
 export default route;
