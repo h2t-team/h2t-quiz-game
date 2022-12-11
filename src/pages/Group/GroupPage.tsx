@@ -3,23 +3,15 @@ import { AppLayout } from 'components/Layouts';
 import { GroupList } from 'components/Group';
 import axios from 'axios';
 import config from 'config';
-import { getItem, isLogin } from 'utils';
+import { getItem } from 'utils';
 import { useQuery } from '@tanstack/react-query';
 import { Group } from 'models';
 import { Button, Form, Modal, Stack } from 'react-bootstrap';
 import { Loader } from 'components/Common';
-import { useNavigate } from 'react-router-dom';
 import { useModal } from 'hooks';
 
 const GroupPage = () => {
   const { closeModal, openModal, isShowModal } = useModal();
-  const navigate = useNavigate();
-  React.useEffect(() => {
-    if (!isLogin()) {
-      const redirectUrl = `/login?redirect=${location.pathname}`;
-      navigate(redirectUrl);
-    }
-  }, []);
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ['groupList'],

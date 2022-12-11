@@ -11,12 +11,18 @@ import {
   ProfilePage,
   RegisterPage,
   SendEmailPage,
+  PresentationPage,
 } from 'pages';
+import PrivateRoute from 'components/PrivateRoute/PrivateRoute';
 
 const route: RouteObject[] = [
   {
     path: '/',
-    element: <HomePage />,
+    element: (
+      <PrivateRoute>
+        <HomePage />
+      </PrivateRoute>
+    ),
     errorElement: <NotFoundPage />,
   },
   {
@@ -41,15 +47,35 @@ const route: RouteObject[] = [
   },
   {
     path: '/profile',
-    element: <ProfilePage />,
+    element: (
+      <PrivateRoute>
+        <ProfilePage />
+      </PrivateRoute>
+    ),
   },
   {
     path: '/groups',
-    element: <GroupPage />,
+    element: (
+      <PrivateRoute>
+        <GroupPage />
+      </PrivateRoute>
+    ),
   },
   {
     path: '/groups/:groupId',
-    element: <GroupDetailPage />,
+    element: (
+      <PrivateRoute>
+        <GroupDetailPage />
+      </PrivateRoute>
+    ),
+  },
+  {
+    path: '/presentations',
+    element: (
+      <PrivateRoute>
+        <PresentationPage />
+      </PrivateRoute>
+    ),
   },
 ];
 

@@ -35,20 +35,28 @@ function Header() {
             </Nav.Link>
           </Nav>
           {isLogin() ? (
-            <NavDropdown
-              title="Username"
-              id="navbarScrollingDropdown"
-              className="mx-2"
-              key="down-centered"
-            >
-              <NavDropdown.Item as={NavLink} to="/profile">
-                Profile
-              </NavDropdown.Item>
-              <NavDropdown.Divider />
-              <NavDropdown.Item onClick={handleSignOut}>
-                Sign out
-              </NavDropdown.Item>
-            </NavDropdown>
+            <Nav>
+              <Link
+                to="/presentations"
+                className="btn btn-primary mx-3 fw-bolder"
+              >
+                My Presentation
+              </Link>
+              <NavDropdown
+                title="Username"
+                id="navbarScrollingDropdown"
+                className="mx-2 align-self-center"
+                key="down-centered"
+              >
+                <NavDropdown.Item as={NavLink} to="/profile">
+                  Profile
+                </NavDropdown.Item>
+                <NavDropdown.Divider />
+                <NavDropdown.Item onClick={handleSignOut}>
+                  Sign out
+                </NavDropdown.Item>
+              </NavDropdown>
+            </Nav>
           ) : (
             <Nav className="align-items-center">
               <Link to="/register" className="btn btn-success mx-3 fw-bolder">

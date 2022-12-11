@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState } from 'react';
 
 function useModal() {
   const [isShowModal, setIsShowModal] = useState(false);
@@ -15,7 +15,7 @@ function useModal() {
     openModal,
     closeModal,
     isShowModal,
-  }
+  };
 }
 
 export default useModal;

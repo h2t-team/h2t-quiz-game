@@ -2,28 +2,20 @@ import React from 'react';
 import { AppLayout } from 'components/Layouts';
 import axios from 'axios';
 import config from 'config';
-import { getItem, isLogin } from 'utils';
+import { getItem } from 'utils';
 import { useQuery } from '@tanstack/react-query';
 import { Loader } from 'components/Common';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { Stack, Button, Modal, Form } from 'react-bootstrap';
 import { useModal } from 'hooks';
 
 function GroupDetailPage() {
   const { closeModal, openModal, isShowModal } = useModal();
   const { groupId } = useParams();
-  const navigate = useNavigate();
 
   const handleAddUser = () => {
     closeModal();
   };
-
-  React.useEffect(() => {
-    if (!isLogin()) {
-      const redirectUrl = `/login?redirect=${location.pathname}`;
-      navigate(redirectUrl);
-    }
-  }, []);
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ['groupDetail'],
