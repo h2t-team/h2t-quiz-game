@@ -1,9 +1,7 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Container, Stack } from 'react-bootstrap';
 import Footer from '../Footer';
 import Header from '../Header';
-import { isLogin } from 'utils';
 import styles from './AppLayout.module.scss';
 
 interface AppLayoutProps {
@@ -11,13 +9,6 @@ interface AppLayoutProps {
 }
 
 const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
-  const navigate = useNavigate();
-  React.useEffect(() => {
-    if (!isLogin()) {
-      navigate('/login');
-    }
-  }, []);
-
   return (
     <Stack direction="vertical" className={styles.container}>
       <Header />

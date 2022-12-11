@@ -8,6 +8,7 @@ import RegisterPage from './Auth/RegisterPage';
 import NotFoundPage from './Error/NotFoundPage';
 import Invite from './User/Invite';
 import ProfilePage from './User/Profile';
+import PresentationPage from './Presentation/PresentationPage';
 
 export {
   GroupDetailPage,
@@ -20,4 +21,5 @@ export {
   NotFoundPage,
   Invite,
   ProfilePage,
+  PresentationPage,
 };
