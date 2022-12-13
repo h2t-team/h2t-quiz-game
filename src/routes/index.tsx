@@ -15,6 +15,7 @@ import {
   JoinGame,
   Result,
   Answer,
+  SlideShow,
 } from 'pages';
 import PrivateRoute from 'components/PrivateRoute/PrivateRoute';
 
@@ -85,17 +86,17 @@ const route: RouteObject[] = [
     element: <JoinGame />,
   },
   {
-    path: '/result/:presentationId/:slideId',
+    path: '/:presentId/:slideId/result',
     element: (
       <Result />
     ),
   },
   {
-    path: '/answer',
-    element: <Answer />,
+    path: '/:presentId/:slideId/show',
+    element: <SlideShow />,
   },
   {
-    path: '/answer/:presentId/:slideId',
+    path: '/:presentId/:slideId/answer',
     element: <Answer />,
   },
 ];

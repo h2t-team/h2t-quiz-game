@@ -66,20 +66,18 @@ const Answer = () => {
       socket.off('disconnect');
       socket.off('join room');
     };
-  }, []);
+  }, [presentId, slideId]);
 
   useEffect(() => {
     const curSlide = slideData.data?.slides.find(
       (item) => item.id.toString() === slideId
     );
     setCurrentSlide(curSlide);
-  }, [slideData.data]);
+  }, [slideData.data, slideId]);
 
   const onSubmit: SubmitHandler<IFormInput> = (data) => {
-    // eslint-disable-next-line no-console
-    console.log(data);
-    socket.emit('update info', { roomId: presentId, optionId: data.answer });
-    nav('/');
+    socket.emit('update info send', { roomId: presentId, optionId: data.answer });
+    nav(`/${presentId}/${slideId}/result`, { replace: true });
   };
 
   if (slideData.isLoading) {
@@ -93,6 +91,7 @@ const Answer = () => {
           <img src={logo} alt="H2T" />
         </div>
         <div className={styles.answerForm}>
+          <h1 className="fw-bold">{currentSlide?.title}</h1>
           <Form onSubmit={handleSubmit(onSubmit)}>
             <Form.Group>
               {currentSlide?.pollSlides.map((option) => (

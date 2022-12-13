@@ -12,6 +12,7 @@ import PresentationPage from './Presentation/PresentationPage';
 import JoinGame from './Player/JoinGame';
 import Answer from './Player/Answer';
 import Result from './Player/Result';
+import SlideShow from './Presentation/SlideShow';
 
 export {
   GroupDetailPage,
@@ -28,4 +29,5 @@ export {
   JoinGame,
   Answer,
   Result,
+  SlideShow,
 };
