@@ -23,12 +23,15 @@ import PrivateRoute from 'components/PrivateRoute/PrivateRoute';
 const editPresentationRouteList = [
   '/presentations/:presentationId/edit',
   '/presentations/:presentationId/:slideId/edit',
-].map(path => ({
-  path, 
-  element: 
+  '/presentations/:presentationId',
+  '/presentations/:presentationId/:slideId',
+].map((path) => ({
+  path,
+  element: (
     <PrivateRoute>
       <PresentationDetailPage />
     </PrivateRoute>
+  ),
 }));
 
 const route: RouteObject[] = [

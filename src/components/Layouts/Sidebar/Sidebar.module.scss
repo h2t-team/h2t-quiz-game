@@ -1,8 +1,8 @@
 @import 'asset/scss/variables';
 
 .sidebar {
-  margin: -3rem -0.75rem;
   background-color: $light;
-  flex-grow: 1;
   padding: 20px;
+  overflow: auto;
+  height: 100%;
 }

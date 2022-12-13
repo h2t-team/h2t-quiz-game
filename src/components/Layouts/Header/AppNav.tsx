@@ -1,6 +1,6 @@
 import React from 'react';
-import { Nav, NavLink, NavDropdown } from 'react-bootstrap';
-import { Link, useNavigate } from 'react-router-dom';
+import { Nav, NavDropdown } from 'react-bootstrap';
+import { Link, useNavigate, NavLink } from 'react-router-dom';
 import { clearItem, isLogin } from 'utils';
 
 const AppNav: React.FC = () => {
@@ -23,10 +23,7 @@ const AppNav: React.FC = () => {
       </Nav>
       {isLogin() ? (
         <Nav>
-          <Link
-            to="/presentations"
-            className="btn btn-primary mx-3 fw-bolder"
-          >
+          <Link to="/presentations" className="btn btn-primary mx-3 fw-bolder">
             My Presentations
           </Link>
           <NavDropdown
@@ -56,6 +53,6 @@ const AppNav: React.FC = () => {
       )}
     </>
   );
-}
+};
 
 export default AppNav;

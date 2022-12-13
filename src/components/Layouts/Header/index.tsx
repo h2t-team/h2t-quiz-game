@@ -17,6 +17,7 @@ function Header() {
       bg="light"
       variant="white"
       className="shadow-sm p-1"
+      sticky="top"
     >
       <Container>
         <Navbar.Brand as={Link} to="/">
@@ -24,13 +25,11 @@ function Header() {
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
-          {
-            isEditPresentation() && isLogin() ? (
-              <EditPresentationNav />
-            ) : (
-              <AppNav />
-            )
-          }
+          {isEditPresentation() && isLogin() ? (
+            <EditPresentationNav />
+          ) : (
+            <AppNav />
+          )}
         </Navbar.Collapse>
       </Container>
     </Navbar>

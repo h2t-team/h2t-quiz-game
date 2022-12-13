@@ -20,7 +20,7 @@ function PresentationList() {
         </tr>
       </tbody>
     </Table>
-  )
+  );
 }
 
 export default PresentationList;

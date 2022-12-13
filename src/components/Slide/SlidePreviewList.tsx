@@ -12,9 +12,9 @@ function SlidePreviewList() {
       <SlidePreviewItem />
       <SlidePreviewItem />
       <SlidePreviewItem />
-      <SlidePreviewItem />  
+      <SlidePreviewItem />
     </Stack>
-  )
+  );
 }
 
 export default SlidePreviewList;

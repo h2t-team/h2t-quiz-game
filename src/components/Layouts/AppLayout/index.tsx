@@ -17,7 +17,10 @@ const AppLayout: React.FC<AppLayoutProps> = ({ fluid = false, children }) => {
   return (
     <Stack direction="vertical" className={styles.container}>
       <Header />
-      <Container className="py-5 flex-grow-1 d-flex flex-column" fluid={fluid}>
+      <Container
+        className={`d-flex flex-column ${fluid && 'g-0'}`}
+        fluid={fluid}
+      >
         {children}
       </Container>
       {showFooter && <Footer />}

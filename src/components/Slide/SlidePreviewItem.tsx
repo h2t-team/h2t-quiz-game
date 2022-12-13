@@ -8,16 +8,16 @@ function SlidePreviewItem() {
   return (
     <div className={`d-flex flex-column p-1 ${styles.slidePreviewItem}`}>
       <div className="d-flex justify-content-between align-items-center mb-1">
-        <p className='m-0 fs-6'>1</p>
+        <p className="m-0 fs-6">1</p>
         <CustomTooltip text="Delete">
           <FaTrashAlt />
         </CustomTooltip>
       </div>
       <div className={styles.slidePreviewItemContainer}>
-        <Image src="https://pixabay.com/get/g6cbbf9aaebbad11c7ae213c4102c01f6cbe761b8c53a516dbd64b741df3fac38e237d470993b78bb7b5a779961b88259_1280.jpg" />
+        <Image src="https://i.picsum.photos/id/408/200/300.jpg?hmac=WHLCqIpd4lzmPZlRRMknXp1aOoOr7_qdtEUwozDmIWQ" />
       </div>
     </div>
-  )
+  );
 }
 
 export default SlidePreviewItem;

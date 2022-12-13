@@ -6,23 +6,18 @@ interface TooltipProps {
   text: string;
 }
 
-
 const CustomTooltip: React.FC<TooltipProps> = ({ text, children }) => {
-  const renderTooltip = () => (
-    <Tooltip>
-      {text}
-    </Tooltip>
-  );
+  const renderTooltip = () => <Tooltip>{text}</Tooltip>;
 
   return (
     <OverlayTrigger
-      placement="top"
+      placement="right"
       delay={{ show: 250, hide: 400 }}
       overlay={renderTooltip}
     >
       {children}
     </OverlayTrigger>
   );
-}
+};
 
 export default CustomTooltip;

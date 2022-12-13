@@ -2,19 +2,18 @@
 
 .slidePreviewItem {
   cursor: pointer;
-  
+
   .slidePreviewItemContainer {
     width: 100%;
     overflow: hidden;
     border-radius: 8px;
-  
+
     img {
       object-fit: contain;
     }
-  
+
     &:hover {
       opacity: 0.5;
     }
   }
 }
-

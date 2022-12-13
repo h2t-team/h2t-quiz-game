@@ -32,4 +32,5 @@ export {
   Result,
   SlideShow,
   PresentationDetailPage
+  PresentationDetailPage,
 };

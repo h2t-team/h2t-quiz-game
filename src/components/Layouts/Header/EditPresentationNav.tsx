@@ -16,11 +16,17 @@ function EditPresentationNav() {
         </Form>
       </Nav>
       <Nav className="align-items-center">
-        <Button variant="info" className="d-flex me-2 fw-semibold align-items-center">
+        <Button
+          variant="info"
+          className="d-flex me-2 fw-semibold align-items-center"
+        >
           <IoColorPalette />
           <span className="ms-2">Theme</span>
         </Button>
-        <Button variant="success" className="d-flex fw-semibold align-items-center">
+        <Button
+          variant="success"
+          className="d-flex fw-semibold align-items-center"
+        >
           <FaPlay />
           <span className="ms-2">Present</span>
         </Button>
