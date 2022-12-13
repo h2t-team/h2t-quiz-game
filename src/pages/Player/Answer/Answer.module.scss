@@ -1,0 +1,50 @@
+@import 'asset/scss/variables';
+
+.logo {
+  width: fit-content;
+  margin: 20px auto;
+
+  img {
+    max-width: 200px;
+  }
+}
+
+.answerForm {
+  margin: 4rem auto;
+  max-width: 600px;
+
+  form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+}
+
+.radioBox {
+  $box: &;
+  margin-block: 0.5rem;
+  display: flex;
+  align-items: center;
+  border: solid 2px $gray;
+  border-radius: 0.5rem;
+
+  * {
+    cursor: pointer;
+  }
+
+  label {
+    font-weight: bold;
+    padding: 1rem;
+    flex: 1 0 auto;
+  }
+
+  input[type='radio'] {
+    width: 20px;
+    height: 20px;
+    margin: 0;
+  }
+
+  &:has([type='radio']:checked) {
+    border-color: $light-purple;
+  }
+}

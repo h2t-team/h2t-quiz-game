@@ -9,9 +9,10 @@ import NotFoundPage from './Error/NotFoundPage';
 import Invite from './User/Invite';
 import ProfilePage from './User/Profile';
 import PresentationPage from './Presentation/PresentationPage';
-import JoinGame from './Player/JoinGame/JoinGame';
-import Instructions from './Player/Instructions/Instructions';
-import AnswerResult from './Player/AnswerResult/AnswerResult';
+import JoinGame from './Player/JoinGame';
+import Answer from './Player/Answer';
+import Result from './Player/Result';
+
 export {
   GroupDetailPage,
   GroupPage,
@@ -25,6 +26,6 @@ export {
   ProfilePage,
   PresentationPage,
   JoinGame,
-  Instructions,
-  AnswerResult
+  Answer,
+  Result,
 };

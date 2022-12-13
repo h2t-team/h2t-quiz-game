@@ -1,5 +1,4 @@
 import React from 'react';
-import PlayerLayout from 'components/Layouts/PlayerLayout';
 import { Chart, ChartType } from 'components/Chart/Chart';
 
 const data = [
@@ -25,14 +24,12 @@ const data = [
   },
 ];
 
-const AnswerResult = () => {
+const Result = () => {
   return (
-    <PlayerLayout>
-      <div style={{margin:'auto'}}>
-        {/* <Chart type={ChartType.pieChartType} data={data}></Chart> */}
-        <Chart type={ChartType.barChartType} data={data}></Chart>
-      </div>
-    </PlayerLayout>
+    <div className="mx-auto">
+      {/* <Chart type={ChartType.pieChartType} data={data}></Chart> */}
+      <Chart type={ChartType.barChartType} data={data}></Chart>
+    </div>
   );
 };
-export default AnswerResult;
+export default Result;
