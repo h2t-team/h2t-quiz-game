@@ -12,6 +12,10 @@ import {
   RegisterPage,
   SendEmailPage,
   PresentationPage,
+  JoinGame,
+  Result,
+  Answer,
+  SlideShow,
 } from 'pages';
 import PrivateRoute from 'components/PrivateRoute/PrivateRoute';
 
@@ -76,6 +80,24 @@ const route: RouteObject[] = [
         <PresentationPage />
       </PrivateRoute>
     ),
+  },
+  {
+    path: '/join-game',
+    element: <JoinGame />,
+  },
+  {
+    path: '/:presentId/:slideId/result',
+    element: (
+      <Result />
+    ),
+  },
+  {
+    path: '/:presentId/:slideId/show',
+    element: <SlideShow />,
+  },
+  {
+    path: '/:presentId/:slideId/answer',
+    element: <Answer />,
   },
 ];
 

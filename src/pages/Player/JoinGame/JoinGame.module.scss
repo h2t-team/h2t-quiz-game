@@ -1,0 +1,37 @@
+@import 'asset/scss/variables';
+
+.joinGamePage {
+  background-color: $white;
+  padding-block: 4rem;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  margin-inline: auto;
+}
+
+.logo {
+  width: fit-content;
+  margin: 20px auto;
+
+  img {
+    max-width: 200px;
+  }
+}
+
+.joinForm {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  input {
+    margin: 1rem 0;
+    padding: 10px;
+    text-align: center;
+    font-weight: bold;
+    text-transform: uppercase;
+    border: 2px solid #ced4da;
+    box-shadow: 0 1px 2px #ced4da;
+    transition: box-shadow 0.3s ease-in-out;
+  }
+}
+
