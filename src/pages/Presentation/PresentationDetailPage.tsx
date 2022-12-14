@@ -10,12 +10,12 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import config from 'config';
 import { getItem } from 'utils';
+import { Slide } from 'models/presentation.model';
 
 function PresentationDetailPage() {
   const { presentationId, slideId } = useParams();
-
   const { data, isLoading, isError } = useQuery({
-    queryKey: ['slideDetail'],
+    queryKey: ['slideDetail', slideId],
     queryFn: async () => {
       const res = await axios.get(
         `${config.apiUrl}/presentation/${presentationId}/${slideId}`,
@@ -68,7 +68,7 @@ function PresentationDetailPage() {
           </Col>
           <Col xs={0} md={3}>
             <Sidebar>
-              <SlideOption />
+              <SlideOption slideInfo={data.slide as Slide}/>
             </Sidebar>
           </Col>
         </Row>

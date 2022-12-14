@@ -31,6 +31,5 @@ export {
   Answer,
   Result,
   SlideShow,
-  PresentationDetailPage
   PresentationDetailPage,
 };
