@@ -13,7 +13,6 @@ import * as yup from 'yup';
 import axios from 'axios';
 import config from 'config';
 
-
 type NewPresentationInputs = {
   presentationName: string;
 };
@@ -53,7 +52,7 @@ function PresentationPage() {
       axios.post(
         `${config.apiUrl}/presentation`,
         {
-          name: data.presentationName
+          name: data.presentationName,
         },
         {
           headers: {
@@ -78,9 +77,9 @@ function PresentationPage() {
     closeModal();
   };
 
-  const handleRemovePresentation = (presentation: { name: any; }) => {
+  const handleRemovePresentation = (presentation: { name: any }) => {
     alert(`Not implemented for removing presentation ${presentation.name} yet`);
-  }
+  };
 
   if (isLoading) {
     return (
@@ -94,14 +93,17 @@ function PresentationPage() {
     return null;
   }
 
-
   return (
     <AppLayout>
       <div className="py-5">
         <h1 className="mb-4">My presentations</h1>
         <div className=" d-flex justify-content-between">
           <ButtonGroup className="mb-4">
-            <Button variant="info" className="d-flex align-items-center" onClick={openModal}>
+            <Button
+              variant="info"
+              className="d-flex align-items-center"
+              onClick={openModal}
+            >
               <AiOutlinePlus />
               <span className="ms-1">New presentation</span>
             </Button>
@@ -110,7 +112,10 @@ function PresentationPage() {
             <Form.Control type="search" placeholder="Type to search" />
           </Form>
         </div>
-        <PresentationList list={data.presentations} onRemovePresentation={handleRemovePresentation}/>
+        <PresentationList
+          list={data.presentations}
+          onRemovePresentation={handleRemovePresentation}
+        />
         <Modal
           size="lg"
           aria-labelledby="create-presentation"
@@ -119,7 +124,9 @@ function PresentationPage() {
           onHide={closeModal}
         >
           <Modal.Header closeButton>
-            <Modal.Title id="create-presentation">Create new presenttion</Modal.Title>
+            <Modal.Title id="create-presentation">
+              Create new presenttion
+            </Modal.Title>
           </Modal.Header>
           <Form onSubmit={handleSubmit(handleCreateNewPresentation)}>
             <Modal.Body>

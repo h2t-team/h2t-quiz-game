@@ -76,7 +76,10 @@ const Answer = () => {
   }, [slideData.data, slideId]);
 
   const onSubmit: SubmitHandler<IFormInput> = (data) => {
-    socket.emit('update info send', { roomId: presentId, optionId: data.answer });
+    socket.emit('update info send', {
+      roomId: presentId,
+      optionId: data.answer,
+    });
     nav(`/${presentId}/${slideId}/result`, { replace: true });
   };
 

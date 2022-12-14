@@ -17,5 +17,5 @@ export interface Presentation {
     name: string;
     inviteCode: string;
   };
-  slides: Slide[]
+  slides: Slide[];
 }

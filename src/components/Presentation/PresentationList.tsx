@@ -8,23 +8,33 @@ interface PresentationListProps {
   onRemovePresentation: (presentation: any) => void;
 }
 
-const PresentationList: React.FC<PresentationListProps> = ({ list, onRemovePresentation }) => {
+const PresentationList: React.FC<PresentationListProps> = ({
+  list,
+  onRemovePresentation,
+}) => {
   // eslint-disable-next-line no-console
   console.log(list);
 
-  const presentationList = list.map(presentation => {
+  const presentationList = list.map((presentation) => {
     return (
       <tr key={presentation.id}>
         <td>
-          <Link to={`/presentations/${presentation.id}/edit`}>{presentation.name}</Link>
+          <Link to={`/presentations/${presentation.id}/edit`}>
+            {presentation.name}
+          </Link>
         </td>
         <td>{presentation.inviteCode}</td>
         <td>
-          <Button variant="danger" onClick={() => onRemovePresentation(presentation)}>Remove</Button>
+          <Button
+            variant="danger"
+            onClick={() => onRemovePresentation(presentation)}
+          >
+            Remove
+          </Button>
         </td>
       </tr>
     );
-  })
+  });
 
   return (
     <Table striped bordered hover>
@@ -35,11 +45,9 @@ const PresentationList: React.FC<PresentationListProps> = ({ list, onRemovePrese
           <th></th>
         </tr>
       </thead>
-      <tbody>
-        {presentationList}
-      </tbody>
+      <tbody>{presentationList}</tbody>
     </Table>
   );
-}
+};
 
 export default PresentationList;
