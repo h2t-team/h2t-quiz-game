@@ -29,6 +29,9 @@ function PresentationDetailPage() {
     },
   });
 
+  // eslint-disable-next-line no-console
+  console.log(data);
+
   if (!presentationId && !slideId) {
     return (
       <AppLayout>
@@ -66,7 +69,7 @@ function PresentationDetailPage() {
           <Col>
             <SlideContent />
           </Col>
-          <Col xs={0} md={3}>
+          <Col xs={0} md={3} className="d-flex flex-column h-100">
             <Sidebar>
               <SlideOption slideInfo={data.slide as Slide}/>
             </Sidebar>

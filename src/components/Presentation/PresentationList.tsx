@@ -1,23 +1,42 @@
 import React from 'react';
-import { Table } from 'react-bootstrap';
+import { Button, Table } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
-function PresentationList() {
+interface PresentationListProps {
+  list: any[];
+  // eslint-disable-next-line no-unused-vars
+  onRemovePresentation: (presentation: any) => void;
+}
+
+const PresentationList: React.FC<PresentationListProps> = ({ list, onRemovePresentation }) => {
+  // eslint-disable-next-line no-console
+  console.log(list);
+
+  const presentationList = list.map(presentation => {
+    return (
+      <tr key={presentation.id}>
+        <td>
+          <Link to={`/presentations/${presentation.id}/edit`}>{presentation.name}</Link>
+        </td>
+        <td>{presentation.inviteCode}</td>
+        <td>
+          <Button variant="danger" onClick={() => onRemovePresentation(presentation)}>Remove</Button>
+        </td>
+      </tr>
+    );
+  })
+
   return (
     <Table striped bordered hover>
       <thead>
         <tr>
           <th>Name</th>
           <th>Created At</th>
+          <th></th>
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td>
-            <Link to="/presentations/123/edit">Name</Link>
-          </td>
-          <td>Created At</td>
-        </tr>
+        {presentationList}
       </tbody>
     </Table>
   );

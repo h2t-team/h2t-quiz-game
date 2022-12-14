@@ -15,6 +15,7 @@ export interface Presentation {
   presentation: {
     id: string;
     name: string;
+    inviteCode: string;
   };
   slides: Slide[]
 }
