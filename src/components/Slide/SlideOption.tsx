@@ -5,7 +5,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 
 import { Slide } from 'models/presentation.model';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { axiosWithToken } from 'utils';
 import axios from 'axios';
 import { Loader } from 'components/Common';
@@ -35,6 +35,7 @@ const schema = yup
   .required();
 
 const SlideOption: React.FC<SlideOptionProps> = ({ slideInfo }) => {
+  const queryClient = useQueryClient();
   const [errMsg, setErrMsg] = React.useState('');
   const mutation = useMutation({
     mutationFn: (data: IFormInput) => {
@@ -59,6 +60,9 @@ const SlideOption: React.FC<SlideOptionProps> = ({ slideInfo }) => {
         );
       }
     },
+    onSuccess: () => {
+      queryClient.invalidateQueries({queryKey: ['slideDetail', slideInfo?.id]})
+    }
   });
 
   const {
