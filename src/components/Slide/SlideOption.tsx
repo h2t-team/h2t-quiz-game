@@ -2,10 +2,10 @@ import React from 'react';
 import { Alert, Button, Form } from 'react-bootstrap';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import * as yup from 'yup';
 
 import { Slide } from 'models/presentation.model';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { axiosWithToken } from 'utils';
 import axios from 'axios';
 import { Loader } from 'components/Common';

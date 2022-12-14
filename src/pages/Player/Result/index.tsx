@@ -58,6 +58,10 @@ const Result = () => {
       nav(`/${presentId}/${slideId}/answer`);
     });
 
+    socket.on('end slide', () => {
+      nav('/join-game');
+    });
+
     return () => {
       socket.off('connect');
       socket.off('disconnect');
