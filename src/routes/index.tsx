@@ -16,8 +16,23 @@ import {
   Result,
   Answer,
   SlideShow,
+  PresentationDetailPage,
 } from 'pages';
 import PrivateRoute from 'components/PrivateRoute/PrivateRoute';
+
+const editPresentationRouteList = [
+  '/presentations/:presentationId/edit',
+  '/presentations/:presentationId/:slideId/edit',
+  '/presentations/:presentationId',
+  '/presentations/:presentationId/:slideId',
+].map((path) => ({
+  path,
+  element: (
+    <PrivateRoute>
+      <PresentationDetailPage />
+    </PrivateRoute>
+  ),
+}));
 
 const route: RouteObject[] = [
   {
@@ -47,7 +62,11 @@ const route: RouteObject[] = [
   },
   {
     path: '/groups/invite/:groupId',
-    element: <Invite />,
+    element: (
+      <PrivateRoute>
+        <Invite />
+      </PrivateRoute>
+    ),
   },
   {
     path: '/profile',
@@ -83,22 +102,37 @@ const route: RouteObject[] = [
   },
   {
     path: '/join-game',
-    element: <JoinGame />,
+    element: (
+      <PrivateRoute>
+        <JoinGame />
+      </PrivateRoute>
+    ),
   },
   {
     path: '/:presentId/:slideId/result',
     element: (
-      <Result />
+      <PrivateRoute>
+        <Result />
+      </PrivateRoute>
     ),
   },
   {
     path: '/:presentId/:slideId/show',
-    element: <SlideShow />,
+    element: (
+      <PrivateRoute>
+        <SlideShow />
+      </PrivateRoute>
+    ),
   },
   {
     path: '/:presentId/:slideId/answer',
-    element: <Answer />,
+    element: (
+      <PrivateRoute>
+        <Answer />
+      </PrivateRoute>
+    ),
   },
+  ...editPresentationRouteList,
 ];
 
 export default route;

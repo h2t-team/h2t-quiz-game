@@ -137,7 +137,10 @@ const SlideShow = () => {
     const index = currentSlide?.index || 0;
     const isLast = index + 1 === slideData.data?.slides.length;
     if (isLast) {
-      nav(`/${presentId}/${slideId}`, { replace: true });
+      socket.emit('end slide', {
+        roomId: presentId,
+      });
+      nav(`/presentations/${presentId}/${slideId}`, { replace: true });
     } else {
       const nextIndex = slideData.data?.slides[index + 1].id as number;
       changeSlideSocketEvent(nextIndex);
@@ -154,7 +157,10 @@ const SlideShow = () => {
       changeSlideSocketEvent(prevIndex);
       nav(`/${presentId}/${prevIndex}/show`);
     } else {
-      nav(`/${presentId}/${slideId}`, { replace: true });
+      socket.emit('end slide', {
+        roomId: presentId,
+      });
+      nav(`/presentations/${presentId}/${slideId}`, { replace: true });
     }
   };
 
@@ -171,7 +177,7 @@ const SlideShow = () => {
         <div className={styles.chart}>
           <Chart type={ChartType.barChartType} data={chartData}></Chart>
         </div>
-        <div className={styles.navigate}>
+        <div className="d-flex justify-content-between">
           <Button variant="primary" onClick={prevSlide}>
             Prev
           </Button>

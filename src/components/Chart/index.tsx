@@ -14,7 +14,7 @@ import {
 enum ChartType {
   barChartType,
   pieChartType,
-} 
+}
 
 interface DataProps {
   name: string;
@@ -61,7 +61,11 @@ const Chart = (props: ChartProps) => {
   switch (props.type) {
     case ChartType.barChartType:
       return (
-        <BarChart width={100 * props.data.length} height={350} data={props.data}>
+        <BarChart
+          width={100 * props.data.length}
+          height={350}
+          data={props.data}
+        >
           <XAxis dataKey="name" interval={0} width={50} />
           <Tooltip />
           <Bar dataKey="value" label={{ position: 'top' }}>

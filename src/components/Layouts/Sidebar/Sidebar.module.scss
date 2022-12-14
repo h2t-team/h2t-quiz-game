@@ -1,0 +1,8 @@
+@import 'asset/scss/variables';
+
+.sidebar {
+  background-color: $light;
+  padding: 20px;
+  overflow: auto;
+  height: 100%;
+}
