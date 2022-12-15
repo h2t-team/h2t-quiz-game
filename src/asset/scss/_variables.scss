@@ -11,6 +11,7 @@ $gray: #f2f2f2;
 
 $purple: #47178f;
 $dark-purple: #2c005f;
+$light-purple: #8a4be9;
 
 $black: #333;
 
@@ -28,3 +29,8 @@ $dark: $dark-purple;
 
 @import '~bootstrap/scss/functions';
 @import '~bootstrap/scss/variables';
+
+$background-transition-color-blue: rgb(65, 196, 222);
+$background-transition-color-green: rgb(140, 199, 63);
+$background-transition-color-yellow: rgb(243, 211, 51);
+$background-transition-color-orange: rgb(247, 142, 86);

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Spinner, SpinnerProps, Container } from 'react-bootstrap';
+import { Spinner, SpinnerProps, Stack } from 'react-bootstrap';
 
 interface LoaderProps extends SpinnerProps {
   isFullPage?: boolean;
@@ -8,10 +8,13 @@ interface LoaderProps extends SpinnerProps {
 
 const Loader: React.FC<LoaderProps> = ({ isFullPage, width, ...props }) => {
   const style = { width: width, height: width };
+
   if (isFullPage) {
-    <Container>
-      <Spinner {...props} style={style} />
-    </Container>;
+    return (
+      <Stack className="justify-content-center align-items-center text-center">
+        <Spinner variant="black" {...props} style={style} />
+      </Stack>
+    );
   }
 
   return <Spinner {...props} style={style} />;

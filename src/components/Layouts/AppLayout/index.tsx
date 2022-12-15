@@ -1,29 +1,30 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Container } from 'react-bootstrap';
+import { Container, Stack } from 'react-bootstrap';
 import Footer from '../Footer';
 import Header from '../Header';
-import { isLogin } from 'utils';
 import styles from './AppLayout.module.scss';
+import { useRoute } from 'hooks';
 
 interface AppLayoutProps {
   children: React.ReactNode;
+  fluid?: boolean;
 }
 
-const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
-  const navigate = useNavigate();
-  React.useEffect(() => {
-    if (!isLogin()) {
-      navigate('/login');
-    }
-  }, []);
+const AppLayout: React.FC<AppLayoutProps> = ({ fluid = false, children }) => {
+  const { isEditPresentation } = useRoute();
+  const showFooter = !isEditPresentation();
 
   return (
-    <div className={styles.container}>
+    <Stack direction="vertical" className={styles.container}>
       <Header />
-      <Container className="py-5">{children}</Container>
-      <Footer />
-    </div>
+      <Container
+        className={`d-flex flex-column ${fluid && 'g-0'}`}
+        fluid={fluid}
+      >
+        {children}
+      </Container>
+      {showFooter && <Footer />}
+    </Stack>
   );
 };
 
