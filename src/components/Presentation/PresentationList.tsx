@@ -41,7 +41,7 @@ const PresentationList: React.FC<PresentationListProps> = ({
       <thead>
         <tr>
           <th>Name</th>
-          <th>Created At</th>
+          <th>Pin Code</th>
           <th></th>
         </tr>
       </thead>

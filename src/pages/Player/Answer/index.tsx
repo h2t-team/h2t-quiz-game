@@ -32,7 +32,7 @@ const Answer = () => {
   } = useForm<IFormInput>({
     resolver: yupResolver(schema),
   });
-  const { presentId, slideId } = useParams();
+  const { presentId, slideIndex } = useParams();
   const slideData = useQuery({
     queryKey: ['presentation', presentId],
     queryFn: async (): Promise<Presentation> => {
@@ -66,21 +66,21 @@ const Answer = () => {
       socket.off('disconnect');
       socket.off('join room');
     };
-  }, [presentId, slideId]);
+  }, [presentId, slideIndex]);
 
   useEffect(() => {
     const curSlide = slideData.data?.slides.find(
-      (item) => item.id.toString() === slideId
+      (item) => item.index.toString() === slideIndex
     );
     setCurrentSlide(curSlide);
-  }, [slideData.data, slideId]);
+  }, [slideData.data, slideIndex]);
 
   const onSubmit: SubmitHandler<IFormInput> = (data) => {
     socket.emit('update info send', {
       roomId: presentId,
       optionId: data.answer,
     });
-    nav(`/${presentId}/${slideId}/result`, { replace: true });
+    nav(`/${presentId}/${slideIndex}/result`, { replace: true });
   };
 
   if (slideData.isLoading) {

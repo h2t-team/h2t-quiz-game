@@ -9,9 +9,13 @@ import { Slide } from 'models/presentation.model';
 import { axiosWithToken } from 'utils';
 import axios from 'axios';
 import { Loader } from 'components/Common';
+import { FaPlay } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 
 interface SlideOptionProps {
   slideInfo?: Slide;
+  presentationId: string;
+  slideIndex: string;
 }
 
 interface IFormInput {
@@ -34,7 +38,12 @@ const schema = yup
   })
   .required();
 
-const SlideOption: React.FC<SlideOptionProps> = ({ slideInfo }) => {
+const SlideOption: React.FC<SlideOptionProps> = ({
+  slideInfo,
+  presentationId,
+  slideIndex,
+}) => {
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [errMsg, setErrMsg] = React.useState('');
   const mutation = useMutation({
@@ -61,8 +70,10 @@ const SlideOption: React.FC<SlideOptionProps> = ({ slideInfo }) => {
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({queryKey: ['slideDetail', slideInfo?.id]})
-    }
+      queryClient.invalidateQueries({
+        queryKey: ['slideDetail', slideInfo?.index],
+      });
+    },
   });
 
   const {
@@ -81,6 +92,13 @@ const SlideOption: React.FC<SlideOptionProps> = ({ slideInfo }) => {
 
   const onSubmit: SubmitHandler<IFormInput> = (data) => {
     mutation.mutate(data);
+  };
+
+  const handlePresent = () => {
+    if (!slideIndex) {
+      navigate(`/${presentationId}/0/show`);
+    }
+    navigate(`/${presentationId}/${slideIndex}/show`);
   };
 
   return (
@@ -149,10 +167,18 @@ const SlideOption: React.FC<SlideOptionProps> = ({ slideInfo }) => {
             animation="border"
             size="sm"
             role="status"
-            className="me-2"
+            className="me-2 mb-2"
           />
         )}
         Save
+      </Button>
+      <Button
+        variant="success"
+        className="d-flex fw-semibold align-items-center mb-2"
+        onClick={handlePresent}
+      >
+        <FaPlay />
+        <span className="ms-2">Present</span>
       </Button>
     </Form>
   );
