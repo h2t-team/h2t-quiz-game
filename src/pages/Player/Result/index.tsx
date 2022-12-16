@@ -15,7 +15,7 @@ interface ChartData {
 }
 
 interface ReceiveData {
-  slideId: number;
+  slideIndex: number;
   data: ChartData[];
 }
 
@@ -23,7 +23,7 @@ const socket = io(config.apiUrl);
 
 const Result = () => {
   const [chartData, setChartData] = useState<ChartData[]>([]);
-  const { presentId, slideId } = useParams();
+  const { presentId, slideIndex } = useParams();
   const nav = useNavigate();
 
   useEffect(() => {
@@ -47,15 +47,15 @@ const Result = () => {
     socket.emit('get data', { roomId: presentId });
 
     socket.on('receive data', (response: ReceiveData) => {
-      if (response.slideId.toString() !== slideId) {
-        nav(`/${presentId}/${response.slideId}/answer`);
+      if (response.slideIndex.toString() !== slideIndex) {
+        nav(`/${presentId}/${response.slideIndex}/answer`);
       } else {
         setChartData(response.data);
       }
     });
 
-    socket.on('change slide', ({ slideId }) => {
-      nav(`/${presentId}/${slideId}/answer`);
+    socket.on('change slide', ({ slideIndex }) => {
+      nav(`/${presentId}/${slideIndex}/answer`);
     });
 
     socket.on('end slide', () => {

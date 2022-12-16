@@ -22,7 +22,7 @@ const socket = io(config.apiUrl);
 const SlideShow = () => {
   const [chartData, setChartData] = useState<ChartData[]>([]);
   const [currentSlide, setCurrentSlide] = useState<Slide>();
-  const { presentId, slideId } = useParams();
+  const { presentId, slideIndex } = useParams();
   const nav = useNavigate();
   const slideData = useQuery({
     queryKey: ['presentation', presentId],
@@ -55,7 +55,7 @@ const SlideShow = () => {
       socket.off('disconnect');
       socket.off('join room');
     };
-  }, [presentId, slideId]);
+  }, [presentId, slideIndex]);
 
   useEffect(() => {
     socket.on('update info receive', ({ optionId }) => {
@@ -73,7 +73,7 @@ const SlideShow = () => {
 
     socket.on('get data', () => {
       socket.emit('receive data', {
-        slideId,
+        slideIndex,
         data: chartData,
         roomId: presentId,
       });
@@ -87,7 +87,7 @@ const SlideShow = () => {
 
   useEffect(() => {
     const curSlide = slideData.data?.slides.find(
-      (item) => item.id.toString() === slideId
+      (item) => item.index.toString() === slideIndex
     );
     if (curSlide) {
       const data = curSlide.pollSlides.map((item) => {
@@ -100,11 +100,11 @@ const SlideShow = () => {
       setCurrentSlide(curSlide);
       setChartData(data);
     }
-  }, [slideData.isSuccess, slideId]);
+  }, [slideData.isSuccess, slideIndex]);
 
   useEffect(() => {
     socket.emit('receive data', {
-      slideId,
+      slideIndex,
       data: chartData,
       roomId: presentId,
     });
@@ -125,10 +125,10 @@ const SlideShow = () => {
     }
   };
 
-  const changeSlideSocketEvent = (slideId: number) => {
+  const changeSlideSocketEvent = (slideIndex: number) => {
     socket.emit('change slide', {
       roomId: presentId,
-      slideId,
+      slideIndex,
     });
   };
 
@@ -140,7 +140,7 @@ const SlideShow = () => {
       socket.emit('end slide', {
         roomId: presentId,
       });
-      nav(`/presentations/${presentId}/${slideId}`, { replace: true });
+      nav(`/presentations/${presentId}/${slideIndex}`, { replace: true });
     } else {
       const nextIndex = slideData.data?.slides[index + 1].id as number;
       changeSlideSocketEvent(nextIndex);
@@ -160,7 +160,7 @@ const SlideShow = () => {
       socket.emit('end slide', {
         roomId: presentId,
       });
-      nav(`/presentations/${presentId}/${slideId}`, { replace: true });
+      nav(`/presentations/${presentId}/${slideIndex}`, { replace: true });
     }
   };
 
