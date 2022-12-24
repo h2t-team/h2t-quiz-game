@@ -52,7 +52,7 @@ function PresentationDetailPage() {
         `${config.apiUrl}/presentation/slide`,
         {
           presentId: presentationId,
-          title: 'test',
+          title: ' ',
         },
         {
           headers: {

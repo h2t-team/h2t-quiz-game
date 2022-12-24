@@ -20,11 +20,14 @@ const AppNav: React.FC = () => {
         <Nav.Link as={NavLink} to="/groups" className="mx-2">
           Group
         </Nav.Link>
+        <Nav.Link as={NavLink} to="/presentations" className="mx-2">
+          Presentations
+        </Nav.Link>
       </Nav>
       {isLogin() ? (
         <Nav>
-          <Link to="/presentations" className="btn btn-primary mx-3 fw-bolder">
-            My Presentations
+          <Link to="/join-game" className="btn btn-primary mx-3 fw-bolder">
+            Join a game
           </Link>
           <NavDropdown
             title="Username"
