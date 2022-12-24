@@ -46,7 +46,7 @@ const JoinGame = () => {
       }
     },
     onSuccess: (data) => {
-      nav(`/${data.data?.presentation.id}/1/answer`);
+      nav(`/${data.data?.presentation.id}/0/answer`);
     },
   });
 

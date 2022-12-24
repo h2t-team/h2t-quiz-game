@@ -142,7 +142,7 @@ const SlideShow = () => {
       });
       nav(`/presentations/${presentId}/${slideIndex}`, { replace: true });
     } else {
-      const nextIndex = slideData.data?.slides[index + 1].id as number;
+      const nextIndex = index + 1;
       changeSlideSocketEvent(nextIndex);
       nav(`/${presentId}/${nextIndex}/show`);
     }
@@ -153,7 +153,7 @@ const SlideShow = () => {
     const index = currentSlide?.index || 0;
     const isFirst = index === 0;
     if (!isFirst) {
-      const prevIndex = slideData.data?.slides[index - 1].id as number;
+      const prevIndex = index - 1;
       changeSlideSocketEvent(prevIndex);
       nav(`/${presentId}/${prevIndex}/show`);
     } else {
