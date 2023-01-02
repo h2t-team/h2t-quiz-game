@@ -1,5 +1,5 @@
-import React from 'react';
-import { Alert, Button, Form } from 'react-bootstrap';
+import React, { useEffect } from 'react';
+import { Alert, Button, Form, Stack } from 'react-bootstrap';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -80,6 +80,7 @@ const SlideOption: React.FC<SlideOptionProps> = ({
     register,
     handleSubmit,
     formState: { errors },
+    setValue,
   } = useForm<IFormInput>({
     resolver: yupResolver(schema),
     defaultValues: {
@@ -100,6 +101,12 @@ const SlideOption: React.FC<SlideOptionProps> = ({
     }
     navigate(`/${presentationId}/${slideIndex}/show`);
   };
+
+  useEffect(() => {
+    setValue('title', slideInfo?.title || '');
+    setValue('option1', slideInfo?.pollSlides[1].option || '');
+    setValue('option2', slideInfo?.pollSlides[0].option || '');
+  }, [slideInfo]);
 
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
@@ -159,27 +166,29 @@ const SlideOption: React.FC<SlideOptionProps> = ({
           <option>Bar chart</option>
         </Form.Select>
       </Form.Group>
-      <Button type="submit" variant="primary" disabled={mutation.isLoading}>
-        {mutation.isLoading && (
-          <Loader
-            as="span"
-            isFullPage={false}
-            animation="border"
-            size="sm"
-            role="status"
-            className="me-2 mb-2"
-          />
-        )}
-        Save
-      </Button>
-      <Button
-        variant="success"
-        className="d-flex fw-semibold align-items-center mb-2"
-        onClick={handlePresent}
-      >
-        <FaPlay />
-        <span className="ms-2">Present</span>
-      </Button>
+      <Stack direction="horizontal" gap={3}>
+        <Button type="submit" variant="primary" disabled={mutation.isLoading}>
+          {mutation.isLoading && (
+            <Loader
+              as="span"
+              isFullPage={false}
+              animation="border"
+              size="sm"
+              role="status"
+              className="me-2 mb-2"
+            />
+          )}
+          Save
+        </Button>
+        <Button
+          variant="success"
+          className="d-flex fw-semibold align-items-center mb-2"
+          onClick={handlePresent}
+        >
+          <FaPlay />
+          <span className="ms-2">Present</span>
+        </Button>
+      </Stack>
     </Form>
   );
 };
