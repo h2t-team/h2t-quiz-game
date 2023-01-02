@@ -1,17 +1,18 @@
 import React from 'react';
 import { AppLayout } from 'components/Layouts';
 import { GroupList } from 'components/Group';
-import axios from 'axios';
 import config from 'config';
-import { getItem } from 'utils';
+import { axiosWithToken } from 'utils';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Group } from 'models';
+import { GroupByUser } from 'models';
 import { Button, Form, Modal, Stack } from 'react-bootstrap';
 import { Loader } from 'components/Common';
 import { useModal } from 'hooks';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
+import { toast } from 'react-toastify';
+import axios from 'axios';
 
 type NewGroupInputs = {
   groupName: string;
@@ -42,42 +43,36 @@ const GroupPage = () => {
   const { data, isLoading, isError } = useQuery({
     queryKey: ['groupList'],
     queryFn: async () => {
-      const res = await axios.get(`${config.apiUrl}/groups`, {
-        headers: {
-          authorization: `Bearer ${getItem('h2t_access_token')}`,
-        },
-      });
+      const res = await axiosWithToken.get(`${config.apiUrl}/groups`);
       return res.data;
     },
   });
 
   const mutation = useMutation({
     mutationFn: (data: NewGroupInputs) =>
-      axios.post(
-        `${config.apiUrl}/groups/createGroup`,
-        {
-          ...data,
-          memberIdList: [],
-        },
-        {
-          headers: {
-            authorization: `Bearer ${getItem('h2t_access_token')}`,
-          },
-        }
-      ),
+      axiosWithToken.post(`${config.apiUrl}/groups/createGroup`, {
+        ...data,
+        memberIdList: [],
+      }),
     onSuccess: () => {
+      toast.success('Create successfully');
       queryClient.invalidateQueries({ queryKey: ['groupList'] });
     },
     onError: (error) => {
-      if (axios.isAxiosError(error)) {
-        // TODO: toast the error
-        alert(error);
+      if (axios.isAxiosError(error) || error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error(String(error));
       }
     },
   });
 
-  const handleCreateNewGroup = (data: NewGroupInputs) => {
-    mutation.mutate(data);
+  const handleCreateNewGroup = async (data: NewGroupInputs) => {
+    await mutation.mutateAsync(data);
+    handleCloseModal();
+  };
+
+  const handleCloseModal = () => {
     reset();
     closeModal();
   };
@@ -99,11 +94,15 @@ const GroupPage = () => {
       <div className="py-5">
         <h1 className="fw-bold">All groups</h1>
         <Stack direction="horizontal" className="justify-content-end">
-          <Button variant="info" onClick={openModal} className="mb-4">
+          <Button
+            variant="info"
+            onClick={openModal}
+            className="mb-4 fw-semibold"
+          >
             New group
           </Button>
         </Stack>
-        <GroupList list={data.groups as Group[]} />
+        <GroupList list={data.groups as GroupByUser[]} />
       </div>
       {/* TODO: Extract Modal to Common */}
       <Modal
@@ -111,7 +110,7 @@ const GroupPage = () => {
         aria-labelledby="create-group"
         centered
         show={isShowModal}
-        onHide={closeModal}
+        onHide={handleCloseModal}
       >
         <Modal.Header closeButton>
           <Modal.Title id="create-group">Create new group</Modal.Title>
@@ -132,11 +131,15 @@ const GroupPage = () => {
             </Form.Group>
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="secondary" onClick={closeModal}>
+            <Button variant="secondary" onClick={handleCloseModal}>
               Cancel
             </Button>
-            <Button variant="primary" type="submit">
-              Create
+            <Button
+              variant="primary"
+              type="submit"
+              disabled={mutation.isLoading}
+            >
+              {mutation.isLoading ? <Loader size="sm" /> : 'Create'}
             </Button>
           </Modal.Footer>
         </Form>
