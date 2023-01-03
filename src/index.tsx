@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import App from './App';
 
 import { GoogleOAuthProvider } from '@react-oauth/google';
+import StoreProvider from 'store';
 import config from '../src/config';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
@@ -25,10 +26,12 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <GoogleOAuthProvider clientId={config.googleCliendId}>
-      <QueryClientProvider client={queryClient}>
-        <App />
-        <ReactQueryDevtools initialIsOpen={false} />
-      </QueryClientProvider>
+      <StoreProvider>
+        <QueryClientProvider client={queryClient}>
+          <App />
+          <ReactQueryDevtools initialIsOpen={false} />
+        </QueryClientProvider>
+      </StoreProvider>
     </GoogleOAuthProvider>
   </React.StrictMode>
 );
