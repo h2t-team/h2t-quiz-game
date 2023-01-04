@@ -17,6 +17,8 @@ import {
   Answer,
   SlideShow,
   PresentationDetailPage,
+  ForgotPasswordPage,
+  ResetPasswordPage
 } from 'pages';
 import PrivateRoute from 'components/PrivateRoute/PrivateRoute';
 
@@ -53,12 +55,20 @@ const route: RouteObject[] = [
     element: <RegisterPage />,
   },
   {
+    path: '/forgot-password',
+    element: <ForgotPasswordPage />,
+  },
+  {
     path: '/send-email',
     element: <SendEmailPage />,
   },
   {
     path: '/auth/activate-account',
     element: <ActivationPage />,
+  },
+  {
+    path: '/auth/reset-password',
+    element: <ResetPasswordPage />,
   },
   {
     path: '/groups/invite/:groupId',
