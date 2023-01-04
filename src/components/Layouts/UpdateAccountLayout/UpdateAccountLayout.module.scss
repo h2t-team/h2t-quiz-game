@@ -1,0 +1,56 @@
+@import '../../../asset/scss/variables';
+
+.page {
+  position: relative;
+  background-color: $dark;
+  width: 100vw;
+  min-height: 100vh;
+  padding-top: 100px;
+}
+
+.formContainer {
+  background-color: $white;
+  width: 500px;
+  max-width: calc(100% - 20px);
+  margin: 0 auto;
+  padding: 40px;
+  border-radius: 20px;
+}
+
+.formDivider {
+  width: 100%;
+  margin-block: 10px;
+  position: relative;
+  text-align: center;
+  font-weight: 600;
+
+  &::before,
+  &::after {
+    content: '';
+    display: block;
+    width: 45%;
+    height: 2px;
+    background-color: rgb(0 0 0/0.2);
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  &::after {
+    right: 0;
+  }
+}
+
+p {
+  color: #404f5e;
+  font-size: 18px;
+  margin: 0;
+}
+
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  text-align: center;
+}

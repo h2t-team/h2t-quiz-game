@@ -66,6 +66,7 @@ const Register = () => {
       navigate('/send-email', {
         state: {
           email: newData.data.email,
+          type: 'Activation',
         },
       });
     },

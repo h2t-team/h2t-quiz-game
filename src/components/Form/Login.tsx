@@ -1,5 +1,10 @@
-import React from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import {
+  Link,
+  useNavigate,
+  useSearchParams,
+  useLocation,
+} from 'react-router-dom';
 import axios from 'axios';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -31,6 +36,9 @@ const schema = yup
 
 const Login = () => {
   const [errMsg, setErrMsg] = React.useState('');
+  const { state: state } = useLocation();
+  const [msg, setMsg] = React.useState('');
+  const [visibleAlert, setVisibleAlert] = useState(false);
   const {
     register,
     handleSubmit,
@@ -82,11 +90,28 @@ const Login = () => {
     mutation.mutate(data);
   };
 
+  const handleVisible = () => {
+    setVisibleAlert(true);
+    setTimeout(() => {
+      setVisibleAlert(false);
+    }, 2000);
+  };
+
+  useEffect(() => {
+    if (state) {
+      setMsg(state.msg);
+      handleVisible();
+    }
+  }, [state]);
+
   return (
     <div className={styles.authForm}>
       <h1 className={styles.formTitle}>H2T Quiz</h1>
       <Alert variant="danger" show={mutation.isError}>
         {errMsg}
+      </Alert>
+      <Alert variant="success" show={visibleAlert}>
+        {msg}
       </Alert>
       <Form onSubmit={handleSubmit(onSubmit)}>
         <Form.Group className="mb-3">
