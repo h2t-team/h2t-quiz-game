@@ -12,6 +12,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import axios from 'axios';
 import config from 'config';
+import { toast } from 'react-toastify';
 
 type NewPresentationInputs = {
   presentationName: string;
@@ -64,9 +65,10 @@ function PresentationPage() {
       queryClient.invalidateQueries({ queryKey: ['presentationList'] });
     },
     onError: (error) => {
-      if (axios.isAxiosError(error)) {
-        // TODO: toast the error
-        alert(error);
+      if (axios.isAxiosError(error) || error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error(String(error));
       }
     },
   });
