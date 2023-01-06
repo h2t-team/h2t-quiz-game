@@ -3,70 +3,64 @@ import { AppLayout, Sidebar } from 'components/Layouts';
 import { SlidePreviewList, SlideContent, SlideOption } from 'components/Slide';
 import { Row, Col, Button, Stack } from 'react-bootstrap';
 import styles from './Presentation.module.scss';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import Custom404 from 'components/Errors/Custom404';
 import { Loader } from 'components/Common';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient, useQueries } from '@tanstack/react-query';
 import axios from 'axios';
 import config from 'config';
-import { getItem } from 'utils';
+import { axiosWithToken, getItem } from 'utils';
 import { Slide } from 'models/presentation.model';
+import { toast } from 'react-toastify';
 
 function PresentationDetailPage() {
   const { presentationId, slideIndex } = useParams();
+  const navigate = useNavigate();
+  if (!slideIndex) {
+    navigate(`/presentations/${presentationId}/0/edit`);
+  }
   const queryClient = useQueryClient();
 
-  const slideDetailQuery = useQuery({
-    queryKey: ['slideDetail', slideIndex],
-    queryFn: async () => {
-      const res = await axios.get(
-        `${config.apiUrl}/presentation/${presentationId}/${slideIndex}`,
-        {
-          headers: {
-            authorization: `Bearer ${getItem('h2t_access_token')}`,
-          },
-        }
-      );
-      return res.data;
-    },
-  });
-
-  const slidePreviewListQuery = useQuery({
-    queryKey: ['slidePreviewList'],
-    queryFn: async () => {
-      const res = await axios.get(
-        `${config.apiUrl}/presentation/${presentationId}/slidepreviews`,
-        {
-          headers: {
-            authorization: `Bearer ${getItem('h2t_access_token')}`,
-          },
-        }
-      );
-      return res.data;
-    },
+  const [slideDetailQuery, slidePreviewListQuery] = useQueries({
+    queries: [
+      {
+        queryKey: ['slideDetail', slideIndex],
+        queryFn: async () => {
+          const res = await axiosWithToken.get(
+            `${config.apiUrl}/presentation/${presentationId}/${slideIndex}`
+          );
+          return res.data;
+        },
+        onError: () => {
+          return null;
+        },
+      },
+      {
+        queryKey: ['slidePreviewList'],
+        queryFn: async () => {
+          const res = await axiosWithToken.get(
+            `${config.apiUrl}/presentation/${presentationId}/slidepreviews`
+          );
+          return res.data;
+        },
+      },
+    ],
   });
 
   const addSlidemutation = useMutation({
     mutationFn: () =>
-      axios.post(
-        `${config.apiUrl}/presentation/slide`,
-        {
-          presentId: presentationId,
-          title: ' ',
-        },
-        {
-          headers: {
-            authorization: `Bearer ${getItem('h2t_access_token')}`,
-          },
-        }
-      ),
+      axiosWithToken.post(`${config.apiUrl}/presentation/slide`, {
+        presentId: presentationId,
+        title: ' ',
+      }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['slidePreviewList'] });
     },
     onError: (error) => {
-      if (axios.isAxiosError(error)) {
-        // TODO: toast the error
-        alert(error);
+      if (axios.isAxiosError(error) || error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error(String(error));
       }
     },
   });
@@ -86,9 +80,10 @@ function PresentationDetailPage() {
       queryClient.invalidateQueries({ queryKey: ['slidePreviewList'] });
     },
     onError: (error) => {
-      if (axios.isAxiosError(error)) {
-        // TODO: toast the error
-        alert(error);
+      if (axios.isAxiosError(error) || error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error(String(error));
       }
     },
   });
@@ -105,8 +100,8 @@ function PresentationDetailPage() {
     removeSlidemutation.mutate(index);
   };
 
-  // eslint-disable-next-line no-console
-  console.log(slidePreviewListQuery.data);
+  // // eslint-disable-next-line no-console
+  // console.log(query);
 
   if (!presentationId && !slideIndex) {
     return (

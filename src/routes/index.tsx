@@ -18,7 +18,7 @@ import {
   SlideShow,
   PresentationDetailPage,
   ForgotPasswordPage,
-  ResetPasswordPage
+  ResetPasswordPage,
 } from 'pages';
 import PrivateRoute from 'components/PrivateRoute/PrivateRoute';
 

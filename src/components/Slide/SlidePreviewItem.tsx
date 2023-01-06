@@ -22,14 +22,16 @@ const SlidePreviewItem: React.FC<SlidePreviewItemProps> = ({
   return (
     <Link
       replace
-      to={`/presentations/${presentationId}/${index}`}
+      to={`/presentations/${presentationId}/${index}/edit`}
       className={`d-flex flex-column p-1 ${styles.slidePreviewItem}`}
     >
       <div className="d-flex justify-content-between align-items-center mb-1">
         <p className="m-0 fs-6">{index + 1}</p>
-        <CustomTooltip text="Delete">
-          <FaTrashAlt onClick={() => onRemoveSlide(index)} />
-        </CustomTooltip>
+        <FaTrashAlt
+          id={index.toString()}
+          onClick={() => onRemoveSlide(index)}
+        />
+        <CustomTooltip text="Delete" id={index.toString()} place="right" />
       </div>
       <div
         className={`${styles.slidePreviewItemContainer} ${

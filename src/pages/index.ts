@@ -35,5 +35,5 @@ export {
   SlideShow,
   PresentationDetailPage,
   ForgotPasswordPage,
-  ResetPasswordPage
+  ResetPasswordPage,
 };

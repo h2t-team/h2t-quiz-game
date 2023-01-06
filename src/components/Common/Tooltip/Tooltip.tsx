@@ -1,23 +1,15 @@
 import React from 'react';
-import { OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { Tooltip } from 'react-tooltip';
+import 'react-tooltip/dist/react-tooltip.css';
 
 interface TooltipProps {
-  children: React.ReactElement;
+  id: string;
   text: string;
+  place?: 'top' | 'bottom' | 'left' | 'right';
 }
 
-const CustomTooltip: React.FC<TooltipProps> = ({ text, children }) => {
-  const renderTooltip = () => <Tooltip>{text}</Tooltip>;
-
-  return (
-    <OverlayTrigger
-      placement="right"
-      delay={{ show: 250, hide: 400 }}
-      overlay={renderTooltip}
-    >
-      {children}
-    </OverlayTrigger>
-  );
+const CustomTooltip: React.FC<TooltipProps> = ({ text, id, place = 'top' }) => {
+  return <Tooltip anchorId={id} place={place} content={text} />;
 };
 
 export default CustomTooltip;

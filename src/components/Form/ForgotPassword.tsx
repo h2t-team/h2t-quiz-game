@@ -78,7 +78,7 @@ const ForgotPassword = () => {
           <Form.Control.Feedback type="invalid">
             {errors.email?.message}
           </Form.Control.Feedback>
-          <p className='mb-3'>We will send reset password link to your email</p>
+          <p className="mb-3">We will send reset password link to your email</p>
         </Form.Group>
         <Button
           type="submit"
