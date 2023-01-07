@@ -1,16 +1,6 @@
+@import "../../Presentation/SlideShow/SlideShow.module.scss";
+
 .resultPage {
   padding-block: 40px;
-
-  .question {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    font-weight: bold;
-  }
-
-  .chart {
-    display: flex;
-    justify-content: center;
-  }
+  height: 100vh;
 }

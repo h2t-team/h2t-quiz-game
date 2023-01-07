@@ -175,7 +175,7 @@ const SlideShow = () => {
           <h1 className={styles.heading}>{currentSlide?.title}</h1>
         ) : (
           <h1 className={styles.question}>
-            {currentSlide?.title} <img src={logo} alt="H2T" height="40" />
+            {currentSlide?.title} <img src={logo} alt="H2T" height="50" />
           </h1>
         )}
         {currentSlide?.type === 'poll' ? (

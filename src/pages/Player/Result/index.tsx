@@ -8,6 +8,9 @@ import { Loader } from 'components/Common';
 import logo from 'asset/images/logo.svg';
 import styles from './Result.module.scss';
 import config from 'config';
+import { useQuery } from '@tanstack/react-query';
+import { Presentation, Slide } from 'models/presentation.model';
+import { axiosWithToken } from 'utils';
 
 interface ChartData {
   name: string;
@@ -24,6 +27,14 @@ const socket = io(config.apiUrl);
 const Result = () => {
   const [chartData, setChartData] = useState<ChartData[]>([]);
   const { presentId, slideIndex } = useParams();
+  const slideData = useQuery({
+    queryKey: ['presentation', presentId],
+    queryFn: async (): Promise<Presentation> => {
+      const response = await axiosWithToken.get(`/presentation/${presentId}`);
+      return response.data;
+    },
+  });
+  const [currentSlide, setCurrentSlide] = useState<Slide>();
   const nav = useNavigate();
 
   useEffect(() => {
@@ -71,19 +82,67 @@ const Result = () => {
     };
   }, []);
 
-  if (chartData.length === 0) {
+  useEffect(() => {
+    socket.on('update info receive', ({ optionId }) => {
+      const option = currentSlide?.pollSlides.findIndex(
+        (item) => item.id.toString() === optionId
+      );
+      if (option !== undefined) {
+        setChartData((prev) => {
+          const newOption = [...prev];
+          newOption[option].value += 1;
+          return newOption;
+        });
+      }
+    });
+
+    socket.on('get data', () => {
+      socket.emit('receive data', {
+        slideIndex,
+        data: chartData,
+        roomId: presentId,
+      });
+    });
+
+    return () => {
+      socket.off('update info receive');
+      socket.off('get data');
+    };
+  }, [currentSlide]);
+
+  useEffect(() => {
+    const curSlide = slideData.data?.slides.find(
+      (item) => item.index.toString() === slideIndex
+    );
+    if (curSlide) {
+      setCurrentSlide(curSlide);
+    }
+  }, [slideData.data, slideIndex]);
+
+  if (chartData.length === 0 && slideData.isLoading) {
     return <Loader isFullPage />;
   }
 
   return (
     <div className={styles.resultPage}>
-      <Container>
-        <h1 className={styles.question}>
-          Result <img src={logo} alt="H2T" height="40" />
-        </h1>
-        <div className={styles.chart}>
-          <Chart type={ChartType.barChartType} data={chartData}></Chart>
-        </div>
+      <Container className="d-flex flex-column h-100">
+        {currentSlide?.type === 'heading' ? (
+          <h1 className={styles.heading}>{currentSlide?.title}</h1>
+        ) : (
+          <h1 className={styles.question}>
+            {currentSlide?.type === 'poll' ? 'Result' : currentSlide?.title}{' '}
+            <img src={logo} alt="H2T" height="50" />
+          </h1>
+        )}
+        {currentSlide?.type === 'poll' ? (
+          <div className={styles.chart}>
+            <Chart type={ChartType.barChartType} data={chartData}></Chart>
+          </div>
+        ) : (
+          currentSlide?.type === 'paragraph' && (
+            <div className={styles.paragraph}>{currentSlide?.paragraph}</div>
+          )
+        )}
       </Container>
     </div>
   );
