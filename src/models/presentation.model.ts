@@ -7,7 +7,9 @@ export interface OptionInSlide {
 export interface Slide {
   id: number;
   title: string;
+  type: string;
   index: number;
+  paragraph?: string;
   pollSlides: OptionInSlide[];
 }
 

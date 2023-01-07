@@ -140,7 +140,7 @@ const SlideShow = () => {
       socket.emit('end slide', {
         roomId: presentId,
       });
-      nav(`/presentations/${presentId}/${slideIndex}`, { replace: true });
+      nav(`/presentations/${presentId}/${slideIndex}/edit`, { replace: true });
     } else {
       const nextIndex = index + 1;
       changeSlideSocketEvent(nextIndex);
@@ -160,7 +160,7 @@ const SlideShow = () => {
       socket.emit('end slide', {
         roomId: presentId,
       });
-      nav(`/presentations/${presentId}/${slideIndex}`, { replace: true });
+      nav(`/presentations/${presentId}/${slideIndex}/edit`, { replace: true });
     }
   };
 
