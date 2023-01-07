@@ -27,6 +27,7 @@ const PresentationList: React.FC<PresentationListProps> = ({
         <td>
           <Button
             variant="danger"
+            size="sm"
             onClick={() => onRemovePresentation(presentation)}
           >
             Remove

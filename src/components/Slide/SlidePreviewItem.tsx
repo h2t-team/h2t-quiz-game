@@ -38,7 +38,7 @@ const SlidePreviewItem: React.FC<SlidePreviewItemProps> = ({
           active && 'bg-primary text-light'
         }`}
       >
-        {index + 1}
+        Slide {index + 1}
       </div>
     </Link>
   );
