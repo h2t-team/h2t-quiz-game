@@ -51,7 +51,7 @@ function PresentationDetailPage() {
     mutationFn: () =>
       axiosWithToken.post(`${config.apiUrl}/presentation/slide`, {
         presentId: presentationId,
-        title: ' ',
+        title: '',
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['slidePreviewList'] });
@@ -100,9 +100,6 @@ function PresentationDetailPage() {
     removeSlidemutation.mutate(index);
   };
 
-  // // eslint-disable-next-line no-console
-  // console.log(query);
-
   if (!presentationId && !slideIndex) {
     return (
       <AppLayout>
@@ -111,13 +108,13 @@ function PresentationDetailPage() {
     );
   }
 
-  if (slideDetailQuery.isLoading || slidePreviewListQuery.isLoading) {
-    return (
-      <AppLayout>
-        <Loader isFullPage />;
-      </AppLayout>
-    );
-  }
+  // if (slideDetailQuery.isLoading || slidePreviewListQuery.isLoading) {
+  //   return (
+  //     <AppLayout>
+  //       <Loader isFullPage />;
+  //     </AppLayout>
+  //   );
+  // }
 
   if (slideDetailQuery.isError || !slideDetailQuery.data) {
     return null;
