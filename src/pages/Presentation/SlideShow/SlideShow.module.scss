@@ -1,5 +1,13 @@
 .slideShowPage {
   padding-block: 40px;
+  height: 100vh;
+}
+
+.heading {
+  font-size: 62px;
+  text-align: center;
+  line-height: 80vh;
+  font-weight: bold;
 }
 
 .question {
@@ -13,4 +21,11 @@
 .chart {
   display: flex;
   justify-content: center;
+}
+
+.paragraph {
+  height: 50vh;
+  padding-block: 5%;
+  font-size: 18px;
+  font-weight: 500;
 }

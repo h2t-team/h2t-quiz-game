@@ -1,13 +1,10 @@
-/* eslint-disable no-unused-vars */
-import React, { ChangeEventHandler, useState } from 'react';
-import { Alert, Button, Form, Stack } from 'react-bootstrap';
+import React, { ChangeEventHandler, useEffect, useState } from 'react';
+import { Form, Stack } from 'react-bootstrap';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { Slide } from 'models/presentation.model';
 import { axiosWithToken } from 'utils';
 import { Loader } from 'components/Common';
-import { FaPlay } from 'react-icons/fa';
-import { useNavigate } from 'react-router-dom';
 import PollForm from 'components/Form/PollForm';
 import ParagraphForm from 'components/Form/ParagraphForm';
 import HeadingForm from 'components/Form/HeadingForm';
@@ -18,20 +15,17 @@ interface SlideOptionProps {
   slideIndex: string;
 }
 
-interface IFormInput {
-  title: string;
-  option1: string;
-  option2: string;
-}
-
 const SlideOption: React.FC<SlideOptionProps> = ({
   slideInfo,
   presentationId,
-  slideIndex,
 }) => {
-  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [type, setType] = useState(slideInfo?.type);
+
+  useEffect(() => {
+    setType(slideInfo?.type);
+  }, [slideInfo]);
+
   const mutation = useMutation({
     mutationFn: (type: string) => {
       return axiosWithToken.patch(`/slide/${slideInfo?.id}/type`, {
@@ -44,7 +38,10 @@ const SlideOption: React.FC<SlideOptionProps> = ({
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['slideDetail', slideInfo?.index],
+        queryKey: [
+          ['slideDetail', slideInfo?.index],
+          ['presentation', presentationId],
+        ],
       });
     },
   });

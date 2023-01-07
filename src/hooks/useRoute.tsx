@@ -8,7 +8,7 @@ function useRoute() {
     return (
       pathnameSplit.includes('presentations') &&
       (pathnameSplit.includes('edit') ||
-        pathnameSplit[pathnameSplit.length] !== 'presentations')
+        pathnameSplit[pathnameSplit.length - 1] !== 'presentations')
     );
   };
 

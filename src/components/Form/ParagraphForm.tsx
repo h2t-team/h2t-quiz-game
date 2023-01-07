@@ -107,7 +107,7 @@ const ParagraphForm: React.FC<ParagraphProps> = ({ slideInfo }) => {
       <Form.Group className="mb-3">
         <Form.Label>Paragraph:</Form.Label>
         <Form.Control
-          type="text"
+          as="textarea"
           placeholder="Paragraph"
           aria-label="Paragraph"
           {...register('paragraph')}
