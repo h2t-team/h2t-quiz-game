@@ -40,11 +40,11 @@ const PollForm: React.FC<PollFormProps> = ({ slideInfo }) => {
   const mutation = useMutation({
     mutationFn: (data: IFormInput) => {
       const updateOption1 = axiosWithToken.patch('/slide', {
-        optionId: slideInfo?.pollSlides[1].id,
+        optionId: slideInfo?.pollSlides[0].id,
         option: data.option1,
       });
       const updateOption2 = axiosWithToken.patch('/slide', {
-        optionId: slideInfo?.pollSlides[0].id,
+        optionId: slideInfo?.pollSlides[1].id,
         option: data.option2,
       });
       const updateTitle = axiosWithToken.patch(`/slide/${slideInfo?.id}`, {
@@ -76,8 +76,8 @@ const PollForm: React.FC<PollFormProps> = ({ slideInfo }) => {
     resolver: yupResolver(schema),
     defaultValues: {
       title: slideInfo?.title,
-      option1: slideInfo?.pollSlides[1].option,
-      option2: slideInfo?.pollSlides[0].option,
+      option1: slideInfo?.pollSlides[0].option,
+      option2: slideInfo?.pollSlides[1].option,
     },
     reValidateMode: 'onChange',
   });
@@ -88,8 +88,8 @@ const PollForm: React.FC<PollFormProps> = ({ slideInfo }) => {
 
   useEffect(() => {
     setValue('title', slideInfo?.title || '');
-    setValue('option1', slideInfo?.pollSlides[1].option || '');
-    setValue('option2', slideInfo?.pollSlides[0].option || '');
+    setValue('option1', slideInfo?.pollSlides[0].option || '');
+    setValue('option2', slideInfo?.pollSlides[1].option || '');
   }, [slideInfo]);
 
   return (
