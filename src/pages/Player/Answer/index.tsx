@@ -75,6 +75,12 @@ const Answer = () => {
     setCurrentSlide(curSlide);
   }, [slideData.data, slideIndex]);
 
+  useEffect(()=>{
+    if(currentSlide?.type === 'heading' || currentSlide?.type === 'paragraph') {
+      nav(`/${presentId}/${slideIndex}/result`, { replace: true });
+    }
+  }, [currentSlide])
+
   const onSubmit: SubmitHandler<IFormInput> = (data) => {
     socket.emit('update info send', {
       roomId: presentId,

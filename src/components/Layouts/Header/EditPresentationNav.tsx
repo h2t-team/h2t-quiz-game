@@ -1,8 +1,19 @@
 import React from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Nav, Form, Button } from 'react-bootstrap';
 import { FaPlay } from 'react-icons/fa';
 
 function EditPresentationNav() {
+  const { presentationId, slideIndex } = useParams();
+  const navigate = useNavigate();
+  
+  const handlePresent = () => {
+    if (!slideIndex) {
+      navigate(`/${presentationId}/0/show`);
+    }
+    navigate(`/${presentationId}/${slideIndex}/show`);
+  };
+
   return (
     <>
       <Nav className="me-auto">
@@ -18,6 +29,7 @@ function EditPresentationNav() {
         <Button
           variant="success"
           className="d-flex fw-semibold align-items-center"
+          onClick={handlePresent}
         >
           <FaPlay />
           <span className="ms-2">Present</span>

@@ -100,7 +100,7 @@ const SlideShow = () => {
       setCurrentSlide(curSlide);
       setChartData(data);
     }
-  }, [slideData.isSuccess, slideIndex]);
+  }, [slideData.data, slideIndex]);
 
   useEffect(() => {
     socket.emit('receive data', {
@@ -140,7 +140,7 @@ const SlideShow = () => {
       socket.emit('end slide', {
         roomId: presentId,
       });
-      nav(`/presentations/${presentId}/${slideIndex}`, { replace: true });
+      nav(`/presentations/${presentId}/${slideIndex}/edit`, { replace: true });
     } else {
       const nextIndex = index + 1;
       changeSlideSocketEvent(nextIndex);
@@ -160,7 +160,7 @@ const SlideShow = () => {
       socket.emit('end slide', {
         roomId: presentId,
       });
-      nav(`/presentations/${presentId}/${slideIndex}`, { replace: true });
+      nav(`/presentations/${presentId}/${slideIndex}/edit`, { replace: true });
     }
   };
 
@@ -170,14 +170,25 @@ const SlideShow = () => {
 
   return (
     <div className={styles.slideShowPage}>
-      <Container>
-        <h1 className={styles.question}>
-          {currentSlide?.title} <img src={logo} alt="H2T" height="40" />
-        </h1>
-        <div className={styles.chart}>
-          <Chart type={ChartType.barChartType} data={chartData}></Chart>
-        </div>
-        <div className="d-flex justify-content-between">
+      <Container className="d-flex flex-column h-100">
+        {currentSlide?.type === 'heading' ? (
+          <h1 className={styles.heading}>{currentSlide?.title}</h1>
+        ) : (
+          <h1 className={styles.question}>
+            {currentSlide?.title} <img src={logo} alt="H2T" height="50" />
+          </h1>
+        )}
+        {currentSlide?.type === 'poll' ? (
+          <div className={styles.chart}>
+            <Chart type={ChartType.barChartType} data={chartData}></Chart>
+          </div>
+        ) : (
+          currentSlide?.type === 'paragraph' && (
+            <div className={styles.paragraph}>{currentSlide?.paragraph}</div>
+          )
+        )}
+
+        <div className="d-flex justify-content-between mt-auto">
           <Button variant="primary" onClick={prevSlide}>
             Prev
           </Button>
