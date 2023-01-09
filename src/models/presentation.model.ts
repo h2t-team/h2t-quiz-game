@@ -11,13 +11,18 @@ export interface Slide {
   index: number;
   paragraph?: string;
   pollSlides: OptionInSlide[];
+  groupId: string | null;
+}
+
+export interface PresentationInfo {
+  id: string;
+  name: string;
+  inviteCode: string;
+  groupId: string | null;
+  'group.name': string | null;
 }
 
 export interface Presentation {
-  presentation: {
-    id: string;
-    name: string;
-    inviteCode: string;
-  };
+  presentation: PresentationInfo;
   slides: Slide[];
 }
