@@ -125,18 +125,6 @@ const SlideShow = () => {
     }
   };
 
-  const endPresent = async () => {
-    try {
-      return await axiosWithToken.patch('/presentation', {
-        isPresent: false,
-        id: presentId,
-      });
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.log(error);
-    }
-  };
-
   const changeSlideSocketEvent = (slideIndex: number) => {
     socket.emit('change slide', {
       roomId: presentId,
@@ -152,7 +140,6 @@ const SlideShow = () => {
       socket.emit('end slide', {
         roomId: presentId,
       });
-      await endPresent();
       nav(`/presentations/${presentId}/${slideIndex}/edit`, { replace: true });
     } else {
       const nextIndex = index + 1;
@@ -173,7 +160,6 @@ const SlideShow = () => {
       socket.emit('end slide', {
         roomId: presentId,
       });
-      await endPresent();
       nav(`/presentations/${presentId}/${slideIndex}/edit`, { replace: true });
     }
   };

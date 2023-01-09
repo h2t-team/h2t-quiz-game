@@ -45,23 +45,12 @@ const JoinGame = () => {
         );
       }
     },
-    onSuccess: async (data) => {
-      try {
-        await axiosWithToken.get(`groups/${data.data?.presentation.groupId}/check-user`);
-        if (data.data?.presentation.isPresent) {
-          nav(`/${data.data?.presentation.id}/0/answer`);
-        } else {
-          setErrMsg('The game does not exist.');
-        }
-      } catch (error) {
-        setErrMsg('You don\'t have permission to join this game.');
-      }
-      
+    onSuccess: (data) => {
+      nav(`/${data.data?.presentation.id}/0/answer`);
     },
   });
 
   const onSubmit: SubmitHandler<IFormInput> = (data) => {
-    setErrMsg('');
     mutation.mutate(data);
   };
 
@@ -72,7 +61,7 @@ const JoinGame = () => {
           <img src={logo} alt="H2T" />
         </div>
         <Col className={styles.joinForm}>
-          <Alert variant="danger" show={mutation.isError || !!errMsg}>
+          <Alert variant="danger" show={mutation.isError}>
             {errMsg}
           </Alert>
           <Form onSubmit={handleSubmit(onSubmit)}>

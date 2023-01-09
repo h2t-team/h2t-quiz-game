@@ -4,7 +4,7 @@ import { Button, ButtonGroup, Form, Modal } from 'react-bootstrap';
 import { AiOutlinePlus } from 'react-icons/ai';
 import PresentationList from 'components/Presentation/PresentationList';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { axiosWithToken } from 'utils';
+import { axiosWithToken, getItem } from 'utils';
 import { Loader } from 'components/Common';
 import { useModal } from 'hooks';
 import { useForm } from 'react-hook-form';
@@ -13,11 +13,9 @@ import * as yup from 'yup';
 import axios from 'axios';
 import config from 'config';
 import { toast } from 'react-toastify';
-import { GroupByUser } from 'models';
 
 type NewPresentationInputs = {
   presentationName: string;
-  groupId?: string;
 };
 
 const schema = yup.object().shape({
@@ -26,7 +24,6 @@ const schema = yup.object().shape({
     .required('Presentation name is required')
     .min(3, 'Presentation name must be at least 3 characters')
     .max(32, 'Presentation name must not exceed 32 characters'),
-  groupId: yup.string(),
 });
 
 function PresentationPage() {
@@ -51,26 +48,19 @@ function PresentationPage() {
     },
   });
 
-  const groupList = useQuery({
-    queryKey: ['groupList'],
-    queryFn: async (): Promise<GroupByUser[]> => {
-      const res = await axiosWithToken.get(`${config.apiUrl}/groups`);
-      return res.data.groups;
-    },
-  });
-
   const mutation = useMutation({
-    mutationFn: (data: NewPresentationInputs) => {
-      const postBody: { name: string; groupId?: string } = {
-        name: data.presentationName,
-      };
-
-      if (data.groupId) {
-        postBody.groupId = data.groupId;
-      }
-
-      return axiosWithToken.post('/presentation', postBody);
-    },
+    mutationFn: (data: NewPresentationInputs) =>
+      axios.post(
+        `${config.apiUrl}/presentation`,
+        {
+          name: data.presentationName,
+        },
+        {
+          headers: {
+            authorization: `Bearer ${getItem('h2t_access_token')}`,
+          },
+        }
+      ),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['presentationList'] });
     },
@@ -153,17 +143,6 @@ function PresentationPage() {
                 <Form.Control.Feedback type="invalid">
                   {errors.presentationName?.message}
                 </Form.Control.Feedback>
-              </Form.Group>
-              <Form.Group className="mb-3">
-                <Form.Label>Group:</Form.Label>
-                <Form.Select {...register('groupId')}>
-                  <option value="">Public Presentation</option>
-                  {groupList.data?.map((item, index) => (
-                    <option key={index} value={item.group.id}>
-                      {item.group.name}
-                    </option>
-                  ))}
-                </Form.Select>
               </Form.Group>
             </Modal.Body>
             <Modal.Footer>
