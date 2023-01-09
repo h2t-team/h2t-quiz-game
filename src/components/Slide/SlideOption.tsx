@@ -59,14 +59,14 @@ const SlideOption: React.FC<SlideOptionProps> = ({
       <Form>
         <Form.Group className="mb-3">
           <Form.Label>Slide Type:</Form.Label>
-          <Form.Select onChange={handleSaveType}>
-            <option selected={type === 'poll'} value="poll">
+          <Form.Select onChange={handleSaveType} value={type}>
+            <option value="poll">
               Poll
             </option>
-            <option selected={type === 'paragraph'} value="paragraph">
+            <option value="paragraph">
               Paragraph
             </option>
-            <option selected={type === 'heading'} value="heading">
+            <option value="heading">
               Heading
             </option>
           </Form.Select>

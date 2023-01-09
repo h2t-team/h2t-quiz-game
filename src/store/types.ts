@@ -1,7 +1,9 @@
 import { Dispatch } from 'react';
+import { Socket } from 'socket.io-client';
 
 export interface GlobalStateInterface {
   testVal: string;
+ socket: Socket;
 }
 
 export type ActionType = {

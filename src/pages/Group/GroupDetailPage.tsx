@@ -5,8 +5,8 @@ import config from 'config';
 import { axiosWithToken } from 'utils';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Loader } from 'components/Common';
-import { useParams } from 'react-router-dom';
-import { Stack, Button, Modal, Form, ListGroup } from 'react-bootstrap';
+import { Link, useParams } from 'react-router-dom';
+import { Stack, Button, Modal, Form, ListGroup, Alert } from 'react-bootstrap';
 import { useModal } from 'hooks';
 import { toast } from 'react-toastify';
 import * as yup from 'yup';
@@ -14,6 +14,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
 import { GroupDetail, UserPreviewWithRoleInGroup } from 'models';
 import { Role } from 'enums';
+import { PresentationInfo } from 'models/presentation.model';
 
 type NewUsersInGroupInputs = {
   email: string;
@@ -61,6 +62,16 @@ function GroupDetailPage() {
         `${config.apiUrl}/groups/${groupId}`
       );
       return res.data as GroupDetail;
+    },
+  });
+
+  const groupPresenting = useQuery({
+    queryKey: ['groupPresenting'],
+    queryFn: async () => {
+      const res = await axiosWithToken.get(
+        `${config.apiUrl}/presentation/group/${groupId}`
+      );
+      return res.data.presentation as PresentationInfo;
     },
   });
 
@@ -126,6 +137,19 @@ function GroupDetailPage() {
     <AppLayout>
       <div className="py-5">
         <h1 className="fw-bold fs-1">{data.group.name}</h1>
+        <Alert
+          variant="info"
+          show={!!groupPresenting.data?.inviteCode}
+          className="d-flex"
+        >
+          &quot;{groupPresenting.data?.name}&quot; is presenting
+          <Link
+            to={`/join-game/?code=${groupPresenting.data?.inviteCode}`}
+            className="ms-auto"
+          >
+            Go to presentation
+          </Link>
+        </Alert>
         <Stack direction="horizontal" className="justify-content-end">
           <Button
             variant="info"

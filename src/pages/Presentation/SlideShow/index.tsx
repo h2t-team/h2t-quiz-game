@@ -1,25 +1,24 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Button, Container } from 'react-bootstrap';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import io from 'socket.io-client';
 
 import { Chart, ChartType } from 'components/Chart';
 import { Loader } from 'components/Common';
 import { axiosWithToken } from 'utils';
 import logo from 'asset/images/logo.svg';
 import styles from './SlideShow.module.scss';
-import config from 'config';
 import { Presentation, Slide } from 'models/presentation.model';
+import { StoreContext } from 'store';
 
 interface ChartData {
   name: string;
   value: number;
 }
 
-const socket = io(config.apiUrl);
-
 const SlideShow = () => {
+  const { globalState } = useContext(StoreContext);
+  const socket = globalState.socket;
   const [chartData, setChartData] = useState<ChartData[]>([]);
   const [currentSlide, setCurrentSlide] = useState<Slide>();
   const { presentId, slideIndex } = useParams();

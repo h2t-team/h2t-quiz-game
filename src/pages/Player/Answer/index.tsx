@@ -1,8 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import io from 'socket.io-client';
+import React, { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { axiosWithToken } from 'utils';
-import config from 'config';
 import { Container, Form, Button } from 'react-bootstrap';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -13,11 +11,12 @@ import styles from './Answer.module.scss';
 import { useQuery } from '@tanstack/react-query';
 import { Loader } from 'components/Common';
 import { Presentation, Slide } from 'models/presentation.model';
+import { StoreContext } from 'store';
 
-const socket = io(config.apiUrl);
 interface IFormInput {
   answer: string;
 }
+
 const schema = yup
   .object({
     answer: yup.string().required('Please choose an option'),
@@ -25,6 +24,8 @@ const schema = yup
   .required();
 
 const Answer = () => {
+  const { globalState } = useContext(StoreContext);
+  const socket = globalState.socket;
   const {
     register,
     handleSubmit,
@@ -75,11 +76,14 @@ const Answer = () => {
     setCurrentSlide(curSlide);
   }, [slideData.data, slideIndex]);
 
-  useEffect(()=>{
-    if(currentSlide?.type === 'heading' || currentSlide?.type === 'paragraph') {
+  useEffect(() => {
+    if (
+      currentSlide?.type === 'heading' ||
+      currentSlide?.type === 'paragraph'
+    ) {
       nav(`/${presentId}/${slideIndex}/result`, { replace: true });
     }
-  }, [currentSlide])
+  }, [currentSlide]);
 
   const onSubmit: SubmitHandler<IFormInput> = (data) => {
     socket.emit('update info send', {
