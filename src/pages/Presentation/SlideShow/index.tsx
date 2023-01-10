@@ -1,25 +1,25 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Button, Container } from 'react-bootstrap';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import io from 'socket.io-client';
 
 import { Chart, ChartType } from 'components/Chart';
 import { Loader } from 'components/Common';
 import { axiosWithToken } from 'utils';
 import logo from 'asset/images/logo.svg';
 import styles from './SlideShow.module.scss';
-import config from 'config';
 import { Presentation, Slide } from 'models/presentation.model';
+import { StoreContext } from 'store';
 
 interface ChartData {
   name: string;
   value: number;
 }
 
-const socket = io(config.apiUrl);
-
 const SlideShow = () => {
+  const {
+    globalState: { socket },
+  } = useContext(StoreContext);
   const [chartData, setChartData] = useState<ChartData[]>([]);
   const [currentSlide, setCurrentSlide] = useState<Slide>();
   const { presentId, slideIndex } = useParams();
@@ -33,16 +33,6 @@ const SlideShow = () => {
   });
 
   useEffect(() => {
-    socket.on('connect', () => {
-      // eslint-disable-next-line no-console
-      console.log('Socket connected');
-    });
-
-    socket.on('disconnect', () => {
-      // eslint-disable-next-line no-console
-      console.log('Socket disconnect');
-    });
-
     socket.emit('join room', presentId);
 
     socket.on('join room', (msg) => {
@@ -50,10 +40,15 @@ const SlideShow = () => {
       console.log(msg);
     });
 
+    socket.on('stop present', async () => {
+      await Promise.all([saveOption(), endPresent()]);
+      socket.emit('end slide', { roomId: presentId });
+      nav(`/presentations/${presentId}/${slideIndex}/edit`, { replace: true });
+    });
+
     return () => {
-      socket.off('connect');
-      socket.off('disconnect');
       socket.off('join room');
+      socket.off('stop present');
     };
   }, [presentId, slideIndex]);
 
@@ -125,6 +120,18 @@ const SlideShow = () => {
     }
   };
 
+  const endPresent = async () => {
+    try {
+      return await axiosWithToken.patch('/presentation', {
+        isPresent: false,
+        id: presentId,
+      });
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.log(error);
+    }
+  };
+
   const changeSlideSocketEvent = (slideIndex: number) => {
     socket.emit('change slide', {
       roomId: presentId,
@@ -140,6 +147,7 @@ const SlideShow = () => {
       socket.emit('end slide', {
         roomId: presentId,
       });
+      await endPresent();
       nav(`/presentations/${presentId}/${slideIndex}/edit`, { replace: true });
     } else {
       const nextIndex = index + 1;
@@ -160,6 +168,7 @@ const SlideShow = () => {
       socket.emit('end slide', {
         roomId: presentId,
       });
+      await endPresent();
       nav(`/presentations/${presentId}/${slideIndex}/edit`, { replace: true });
     }
   };
