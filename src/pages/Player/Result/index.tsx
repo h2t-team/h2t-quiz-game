@@ -23,8 +23,9 @@ interface ReceiveData {
 }
 
 const Result = () => {
-  const { globalState } = useContext(StoreContext);
-  const socket = globalState.socket;
+  const {
+    globalState: { socket },
+  } = useContext(StoreContext);
   const [chartData, setChartData] = useState<ChartData[]>([]);
   const { presentId, slideIndex } = useParams();
   const slideData = useQuery({
@@ -38,25 +39,15 @@ const Result = () => {
   const nav = useNavigate();
 
   useEffect(() => {
-    socket.on('connect', () => {
-      // eslint-disable-next-line no-console
-      console.log('Socket connected');
-    });
-
-    socket.on('disconnect', () => {
-      // eslint-disable-next-line no-console
-      console.log('Socket disconnect');
-    });
-
-    socket.emit('join room', presentId);
-
+    socket.emit('join room', presentId);    
+    
     socket.on('join room', (msg) => {
       // eslint-disable-next-line no-console
       console.log(msg);
     });
-
+    
     socket.emit('get data', { roomId: presentId });
-
+    
     socket.on('receive data', (response: ReceiveData) => {
       if (response.slideIndex.toString() !== slideIndex) {
         nav(`/${presentId}/${response.slideIndex}/answer`);
@@ -64,21 +55,20 @@ const Result = () => {
         setChartData(response.data);
       }
     });
-
+    
     socket.on('change slide', ({ slideIndex }) => {
       nav(`/${presentId}/${slideIndex}/answer`);
     });
-
+    
     socket.on('end slide', () => {
       nav('/join-game');
     });
-
+    
     return () => {
-      socket.off('connect');
-      socket.off('disconnect');
       socket.off('join room');
       socket.off('receive data');
       socket.off('change slide');
+      socket.off('end slide');
     };
   }, []);
 

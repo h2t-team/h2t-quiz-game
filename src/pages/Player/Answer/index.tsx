@@ -24,8 +24,9 @@ const schema = yup
   .required();
 
 const Answer = () => {
-  const { globalState } = useContext(StoreContext);
-  const socket = globalState.socket;
+  const {
+    globalState: { socket },
+  } = useContext(StoreContext);
   const {
     register,
     handleSubmit,
@@ -44,28 +45,28 @@ const Answer = () => {
   const [currentSlide, setCurrentSlide] = useState<Slide | undefined>(
     undefined
   );
-  const [, setIsConnected] = useState(socket.connected);
   const nav = useNavigate();
   useEffect(() => {
-    socket.on('connect', () => {
-      setIsConnected(true);
-    });
-
-    socket.on('disconnect', () => {
-      setIsConnected(false);
-    });
-
     socket.emit('join room', presentId);
-
+    
     socket.on('join room', (msg) => {
       // eslint-disable-next-line no-console
       console.log(msg);
     });
+    
+    socket.on('change slide', ({ slideIndex }) => {
+      nav(`/${presentId}/${slideIndex}/answer`);
+    });
+    
+    socket.on('end slide', () => {
+      nav('/join-game');
+    });
+
 
     return () => {
-      socket.off('connect');
-      socket.off('disconnect');
       socket.off('join room');
+      socket.off('change slide');
+      socket.off('end slide');
     };
   }, [presentId, slideIndex]);
 

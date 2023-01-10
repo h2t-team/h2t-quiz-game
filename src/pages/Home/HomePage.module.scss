@@ -1,0 +1,17 @@
+@import 'asset/scss/variables.scss';
+
+.homepage {
+  background-color: $white;
+  height: 70vh;
+  text-align: center;
+}
+
+.content {
+  margin-top: 120px;
+
+  h1 {
+    color: $primary;
+    font-weight: 800;
+    margin-block: 20px 40px;
+  }
+}

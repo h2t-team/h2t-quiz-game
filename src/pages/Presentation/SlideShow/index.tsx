@@ -17,8 +17,9 @@ interface ChartData {
 }
 
 const SlideShow = () => {
-  const { globalState } = useContext(StoreContext);
-  const socket = globalState.socket;
+  const {
+    globalState: { socket },
+  } = useContext(StoreContext);
   const [chartData, setChartData] = useState<ChartData[]>([]);
   const [currentSlide, setCurrentSlide] = useState<Slide>();
   const { presentId, slideIndex } = useParams();
@@ -32,16 +33,6 @@ const SlideShow = () => {
   });
 
   useEffect(() => {
-    socket.on('connect', () => {
-      // eslint-disable-next-line no-console
-      console.log('Socket connected');
-    });
-
-    socket.on('disconnect', () => {
-      // eslint-disable-next-line no-console
-      console.log('Socket disconnect');
-    });
-
     socket.emit('join room', presentId);
 
     socket.on('join room', (msg) => {
@@ -49,10 +40,15 @@ const SlideShow = () => {
       console.log(msg);
     });
 
+    socket.on('stop present', async () => {
+      await Promise.all([saveOption(), endPresent()]);
+      socket.emit('end slide', { roomId: presentId });
+      nav(`/presentations/${presentId}/${slideIndex}/edit`, { replace: true });
+    });
+
     return () => {
-      socket.off('connect');
-      socket.off('disconnect');
       socket.off('join room');
+      socket.off('stop present');
     };
   }, [presentId, slideIndex]);
 

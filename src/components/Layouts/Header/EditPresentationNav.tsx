@@ -1,4 +1,4 @@
-import React, { FocusEventHandler, useEffect } from 'react';
+import React, { FocusEventHandler, useContext, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -9,6 +9,7 @@ import { Nav, Form, Button } from 'react-bootstrap';
 import { FaPlay } from 'react-icons/fa';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { Presentation } from 'models/presentation.model';
+import { StoreContext } from 'store';
 
 interface IFormInput {
   title: string;
@@ -21,6 +22,9 @@ const schema = yup
   .required();
 
 function EditPresentationNav() {
+  const {
+    globalState: { socket },
+  } = useContext(StoreContext);
   const { presentationId, slideIndex } = useParams();
   const navigate = useNavigate();
   const pressentInfo = useQuery({
@@ -48,10 +52,26 @@ function EditPresentationNav() {
         id: presentationId,
       }),
     onSuccess: () => {
+      socket.emit('notify present', {
+        roomId: pressentInfo.data?.presentation.groupId,
+        inviteCode: pressentInfo.data?.presentation.inviteCode,
+        presentName: pressentInfo.data?.presentation.name,
+        groupName: pressentInfo.data?.presentation['group.name'],
+      });
       if (!slideIndex) {
         navigate(`/${presentationId}/0/show`);
       }
       navigate(`/${presentationId}/${slideIndex}/show`);
+    },
+  });
+
+  const stopPresentMutation = useMutation({
+    mutationFn: (groupId: string) =>
+      axiosWithToken.post(`/presentation/group/${groupId}`, {
+        presentId: presentationId,
+      }),
+    onSuccess: () => {
+      updatePresentMutation.mutate();
     },
   });
 
@@ -73,7 +93,9 @@ function EditPresentationNav() {
   }, [pressentInfo.data]);
 
   const handlePresent = () => {
-    updatePresentMutation.mutate();
+    stopPresentMutation.mutate(
+      pressentInfo.data?.presentation.groupId as string
+    );
   };
 
   const handleSubmit: FocusEventHandler<HTMLInputElement> = (e) => {
