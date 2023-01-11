@@ -16,7 +16,6 @@ export const getItem = (key: string) => {
       localStorage.removeItem(key);
       return null;
     }
-
     return item?.value;
   } catch (error) {
     return value;

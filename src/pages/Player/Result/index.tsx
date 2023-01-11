@@ -43,9 +43,9 @@ const Result: React.FC = () => {
     socket.on('join room', (msg) => {
       // eslint-disable-next-line no-console
       console.log(msg);
+      socket.emit('get data', { roomId: presentId });
     });
 
-    socket.emit('get data', { roomId: presentId });
 
     socket.on('receive data', (response: ReceiveData) => {
       if (response.slideIndex.toString() !== slideIndex) {
