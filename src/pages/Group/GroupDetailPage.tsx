@@ -5,8 +5,8 @@ import config from 'config';
 import { axiosWithToken } from 'utils';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Loader } from 'components/Common';
-import { Link, useParams } from 'react-router-dom';
-import { Stack, Button, Modal, Form, ListGroup, Alert } from 'react-bootstrap';
+import { Link, useParams, useNavigate } from 'react-router-dom';
+import { Stack, Button, Form, ListGroup, Alert } from 'react-bootstrap';
 import { useModal } from 'hooks';
 import { toast } from 'react-toastify';
 import * as yup from 'yup';
@@ -14,6 +14,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
 import { GroupDetail, UserPreviewWithRoleInGroup } from 'models';
 import { Role } from 'enums';
+import CustomModal from 'components/Common/CustomModal/CustomModal';
 import { PresentationInfo } from 'models/presentation.model';
 
 type NewUsersInGroupInputs = {
@@ -35,7 +36,10 @@ function GroupDetailPage() {
   const addUserModal = useModal();
   const updateUserModal = useModal();
   const kickUserModal = useModal();
+  const deleteGroupModal = useModal();
   const { groupId } = useParams();
+
+  const navigate = useNavigate();
 
   const {
     register,
@@ -129,8 +133,28 @@ function GroupDetailPage() {
     },
   });
 
+  const kickUserMutation = useMutation({
+    mutationFn: (data: { role: Role }) =>
+      axiosWithToken.put(`${config.apiUrl}/groups/${groupId}/setUserRole`, {
+        memberId: selectedUser?.userId,
+        role: data.role,
+      }),
+    onSuccess: (res: AxiosResponse) => {
+      toast.success(res.data.message);
+      queryClient.invalidateQueries({ queryKey: ['groupDetail'] });
+      kickUserModal.closeModal();
+    },
+    onError: (error) => {
+      if (axios.isAxiosError(error) || error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error(String(error));
+      }
+    },
+  });
+
   const handleKickUserInGroup = () => {
-    setUserRoleMutation.mutateAsync({ role: Role.KICK_OUT });
+    kickUserMutation.mutateAsync({ role: Role.KICK_OUT });
   };
 
   const handleChangeRole: ChangeEventHandler<HTMLSelectElement> = (e) => {
@@ -140,6 +164,31 @@ function GroupDetailPage() {
 
   const handleChangeUserRole = () => {
     setUserRoleMutation.mutate({ role: selectedRole });
+  };
+
+  const deleteGroupMutation = useMutation({
+    mutationFn: (data: { isDelete: boolean }) =>
+      axiosWithToken.put(`${config.apiUrl}/groups/setDeleteGroup`, {
+        groupId: groupId,
+        isDelete: data.isDelete,
+      }),
+    onSuccess: (res: AxiosResponse) => {
+      toast.success(res.data.message);
+      queryClient.invalidateQueries({ queryKey: ['groupList'] });
+      deleteGroupModal.closeModal();
+      navigate('/groups');
+    },
+    onError: (error) => {
+      if (axios.isAxiosError(error) || error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error(String(error));
+      }
+    },
+  });
+
+  const handleDeleteGroup = () => {
+    deleteGroupMutation.mutate({ isDelete: true });
   };
 
   if (isLoading) {
@@ -153,6 +202,22 @@ function GroupDetailPage() {
   if (isError || !data) {
     return null;
   }
+
+  const addUserFormModalBody = (
+    <>
+      <Form.Group className="mb-3">
+        <Form.Label>Invite the user to add:</Form.Label>
+        <Form.Control
+          {...register('email')}
+          placeholder="Example: abc123@gmail.com"
+          isInvalid={!!errors.email}
+        />
+        <Form.Control.Feedback type="invalid">
+          {errors.email?.message}
+        </Form.Control.Feedback>
+      </Form.Group>
+    </>
+  );
 
   return (
     <AppLayout>
@@ -183,7 +248,7 @@ function GroupDetailPage() {
             {/* Check current user role = owner ? */}
             <Button
               variant="danger"
-              onClick={kickUserModal.openModal}
+              onClick={deleteGroupModal.openModal}
               className="mb-4 ms-2 fw-semibold"
             >
               Delete group
@@ -240,97 +305,50 @@ function GroupDetailPage() {
           </ListGroup>
         </div>
         {/* TODO: Extract Modal to Common */}
-        <Modal
-          size="lg"
-          aria-labelledby="add-user-group"
-          centered
-          show={addUserModal.isShowModal}
-          onHide={handleCloseAddUserModal}
-        >
-          <Modal.Header closeButton>
-            <Modal.Title id="add-user-group">Add a user</Modal.Title>
-          </Modal.Header>
-          <Form onSubmit={handleSubmit(handleAddUsersToGroup)}>
-            <Modal.Body>
-              <Form.Group className="mb-3">
-                <Form.Label>Invite the user to add:</Form.Label>
-                <Form.Control
-                  {...register('email')}
-                  placeholder="Example: abc123@gmail.com"
-                  isInvalid={!!errors.email}
-                />
-                <Form.Control.Feedback type="invalid">
-                  {errors.email?.message}
-                </Form.Control.Feedback>
-              </Form.Group>
-            </Modal.Body>
-            <Modal.Footer>
-              <Button variant="secondary" onClick={handleCloseAddUserModal}>
-                Cancel
-              </Button>
-              <Button
-                variant="primary"
-                type="submit"
-                disabled={addUserMutation.isLoading}
-              >
-                {addUserMutation.isLoading ? <Loader size="sm" /> : 'Add'}
-              </Button>
-            </Modal.Footer>
-          </Form>
-        </Modal>
-        <Modal
-          size="lg"
-          aria-labelledby="kick-user-group"
-          centered
-          show={kickUserModal.isShowModal}
-          onHide={kickUserModal.closeModal}
-        >
-          <Modal.Header closeButton>
-            <Modal.Title id="add-user-group">Confirm kick the user</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            Are you sure you want to kick {selectedUser?.user.fullname}?
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={kickUserModal.closeModal}>
-              Cancel
-            </Button>
-            <Button
-              variant="danger"
-              onClick={handleKickUserInGroup}
-              disabled={setUserRoleMutation.isLoading}
-            >
-              {addUserMutation.isLoading ? <Loader size="sm" /> : 'Kick'}
-            </Button>
-          </Modal.Footer>
-        </Modal>
-        <Modal
-          size="lg"
-          aria-labelledby="update-user-group"
-          centered
-          show={updateUserModal.isShowModal}
-          onHide={updateUserModal.closeModal}
-        >
-          <Modal.Header closeButton>
-            <Modal.Title id="add-user-group">Confirm kick the user</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            Are you sure you want to change role of{' '}
-            {selectedUser?.user.fullname}?
-          </Modal.Body>
-          <Modal.Footer>
-            <Button
-              variant="primary"
-              onClick={handleChangeUserRole}
-              disabled={setUserRoleMutation.isLoading}
-            >
-              {setUserRoleMutation.isLoading ? <Loader size="sm" /> : 'Yes'}
-            </Button>
-            <Button variant="danger" onClick={updateUserModal.closeModal}>
-              Cancel
-            </Button>
-          </Modal.Footer>
-        </Modal>
+        {/* ADD USER */}
+        <CustomModal
+          isShowModal={addUserModal.isShowModal}
+          closeModal={handleCloseAddUserModal}
+          titleText={'Add a user'}
+          submitForm={handleSubmit(handleAddUsersToGroup)}
+          modalBody={addUserFormModalBody}
+          cancelModal={handleCloseAddUserModal}
+          isDisableConfirm={addUserMutation.isLoading}
+          confirmText={'Add'}
+        />
+        {/* KICK USER */}
+        <CustomModal
+          isShowModal={kickUserModal.isShowModal}
+          closeModal={kickUserModal.closeModal}
+          titleText={'Confirm kick the user'}
+          bodyText={`Are you sure you want to kick ${selectedUser?.user.fullname}?`}
+          cancelModal={kickUserModal.closeModal}
+          isDisableConfirm={kickUserMutation.isLoading}
+          confirmText={'Kick'}
+          confirmClick={handleKickUserInGroup}
+        />
+        {/* SET ROLE USER */}
+        <CustomModal
+          isShowModal={updateUserModal.isShowModal}
+          closeModal={updateUserModal.closeModal}
+          titleText={'Confirm change role of user'}
+          bodyText={`Are you sure you want to change role of ${selectedUser?.user.fullname}?`}
+          cancelModal={updateUserModal.closeModal}
+          isDisableConfirm={setUserRoleMutation.isLoading}
+          confirmText={'Yes'}
+          confirmClick={handleChangeUserRole}
+        />
+        {/* DELETE GROUP */}
+        <CustomModal
+          isShowModal={deleteGroupModal.isShowModal}
+          closeModal={deleteGroupModal.closeModal}
+          titleText={'Confirm delete group'}
+          bodyText={`Are you sure you want to delete  ${data.group.name}?`}
+          cancelModal={deleteGroupModal.closeModal}
+          isDisableConfirm={deleteGroupMutation.isLoading}
+          confirmText={'Delete'}
+          confirmClick={handleDeleteGroup}
+        />
       </div>
     </AppLayout>
   );
