@@ -4,11 +4,12 @@ import AddQuestionModal from 'components/Modal/AddQuestionModal';
 import ChatModal from 'components/Modal/ChatModal';
 import config from 'config';
 import { useModal } from 'hooks';
-import { Question } from 'models/presentation.model';
-import React, { ComponentType, useContext, useEffect } from 'react';
+import { Message, Question } from 'models/presentation.model';
+import React, { ComponentType, useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { StoreContext } from 'store';
 import { axiosWithToken } from 'utils';
+import { v4 as uuidv4 } from 'uuid';
 
 interface WithPlayerSlideShowProps {
   component: ComponentType;
@@ -19,10 +20,12 @@ const WithPlayerSlideShow: React.FC<WithPlayerSlideShowProps> = (props) => {
   const queryClient = useQueryClient();
   const chatModal = useModal();
   const addQuestionModal = useModal();
+  const [isCheckedNoti, setIsCheckedNoti] = useState<boolean>(false);
   const { presentId } = useParams();
   const {
     globalState: { socket },
   } = useContext(StoreContext);
+  const [messageList, setMessageList] = useState<Message[]>([]);
 
   const handleAddQuestion = (data: { question: string }) => {
     socket.emit('add question', {
@@ -30,6 +33,14 @@ const WithPlayerSlideShow: React.FC<WithPlayerSlideShowProps> = (props) => {
       question: data.question,
     });
   };
+
+  const userInfo = useQuery({
+    queryKey: ['userInfo'],
+    queryFn: async () => {
+      const res = await axiosWithToken.get('/user');
+      return res.data;
+    },
+  });
 
   const { data } = useQuery({
     queryKey: ['slideshow-questions'],
@@ -55,12 +66,50 @@ const WithPlayerSlideShow: React.FC<WithPlayerSlideShowProps> = (props) => {
     });
   }, []);
 
+  useEffect(() => {
+    socket.on('receive message', ({ messageText, username }: { messageText: string, username: string }) => {
+      if (!chatModal.isShowModal) {
+        setIsCheckedNoti(true);
+      }
+
+      setMessageList(prev => 
+        [...prev, { 
+          text: messageText, 
+          username, 
+          id: uuidv4() 
+        }]
+      )
+    });
+
+    return () => {
+      socket.off('receive message');
+    };
+  });
+
+  const handleAddMessage = (messageText: string) => {
+    if (!messageText) {
+      return;
+    }
+
+    socket.emit('send message', {
+      roomId: presentId,
+      messageText,
+      username: userInfo.data?.user?.fullname as string
+    })
+  }
+
+  const openChatModal = () => {
+    setIsCheckedNoti(false);
+    chatModal.openModal();
+  }
+
   return (
     <>
       <Component />
       <SlideShowMenu
-        openChatModal={chatModal.openModal}
+        openChatModal={openChatModal}
         openQaModal={addQuestionModal.openModal}
+        isCheckedNoti={isCheckedNoti}
       />
       <AddQuestionModal
         isShowModal={addQuestionModal.isShowModal}
@@ -72,6 +121,8 @@ const WithPlayerSlideShow: React.FC<WithPlayerSlideShowProps> = (props) => {
       <ChatModal
         isShowModal={chatModal.isShowModal}
         closeModal={chatModal.closeModal}
+        messageList={messageList}
+        handleAddMessage={handleAddMessage}
       />
     </>
   );
