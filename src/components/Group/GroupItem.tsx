@@ -84,11 +84,12 @@ const GroupItem: React.FC<GroupItemProps> = ({ data }) => {
         isShowModal={deleteGroupModal.isShowModal}
         closeModal={deleteGroupModal.closeModal}
         titleText={'Confirm delete group'}
-        bodyText={`Are you sure you want to delete  ${data.group.name}?`}
+        bodyText={`Are you sure you want to delete ${data.group.name}?`}
         cancelModal={deleteGroupModal.closeModal}
         isDisableConfirm={deleteGroupMutation.isLoading}
         confirmText={'Delete'}
         confirmClick={handleDeleteGroup}
+        confirmVariant={'danger'}
       />
     </>
   );

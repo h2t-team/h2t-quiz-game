@@ -315,6 +315,7 @@ function GroupDetailPage() {
           cancelModal={handleCloseAddUserModal}
           isDisableConfirm={addUserMutation.isLoading}
           confirmText={'Add'}
+          confirmVariant={'primary'}
         />
         {/* KICK USER */}
         <CustomModal
@@ -326,6 +327,7 @@ function GroupDetailPage() {
           isDisableConfirm={kickUserMutation.isLoading}
           confirmText={'Kick'}
           confirmClick={handleKickUserInGroup}
+          confirmVariant={'danger'}
         />
         {/* SET ROLE USER */}
         <CustomModal
@@ -337,17 +339,19 @@ function GroupDetailPage() {
           isDisableConfirm={setUserRoleMutation.isLoading}
           confirmText={'Yes'}
           confirmClick={handleChangeUserRole}
+          confirmVariant={'primary'}
         />
         {/* DELETE GROUP */}
         <CustomModal
           isShowModal={deleteGroupModal.isShowModal}
           closeModal={deleteGroupModal.closeModal}
           titleText={'Confirm delete group'}
-          bodyText={`Are you sure you want to delete  ${data.group.name}?`}
+          bodyText={`Are you sure you want to delete ${data.group.name}?`}
           cancelModal={deleteGroupModal.closeModal}
           isDisableConfirm={deleteGroupMutation.isLoading}
           confirmText={'Delete'}
           confirmClick={handleDeleteGroup}
+          confirmVariant={'danger'}
         />
       </div>
     </AppLayout>
