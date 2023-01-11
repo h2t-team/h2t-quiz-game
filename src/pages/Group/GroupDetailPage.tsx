@@ -1,5 +1,3 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable no-console */
 import React, { ChangeEventHandler, useState } from 'react';
 import { AppLayout } from 'components/Layouts';
 import axios, { AxiosResponse } from 'axios';
@@ -7,7 +5,7 @@ import config from 'config';
 import { axiosWithToken } from 'utils';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Loader } from 'components/Common';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import { Stack, Button, Form, ListGroup, Alert } from 'react-bootstrap';
 import { useModal } from 'hooks';
 import { toast } from 'react-toastify';
@@ -40,6 +38,8 @@ function GroupDetailPage() {
   const kickUserModal = useModal();
   const deleteGroupModal = useModal();
   const { groupId } = useParams();
+
+  const navigate = useNavigate();
 
   const {
     register,
@@ -167,15 +167,16 @@ function GroupDetailPage() {
   };
 
   const deleteGroupMutation = useMutation({
-    mutationFn: (data: { role: Role }) =>
-      axiosWithToken.put(`${config.apiUrl}/groups/${groupId}/setUserRole`, {
-        memberId: selectedUser?.userId,
-        role: data.role,
+    mutationFn: (data: { isDelete: boolean }) =>
+      axiosWithToken.put(`${config.apiUrl}/groups/setDeleteGroup`, {
+        groupId: groupId,
+        isDelete: data.isDelete,
       }),
     onSuccess: (res: AxiosResponse) => {
       toast.success(res.data.message);
-      queryClient.invalidateQueries({ queryKey: ['groupDetail'] });
-      kickUserModal.closeModal();
+      queryClient.invalidateQueries({ queryKey: ['groupList'] });
+      deleteGroupModal.closeModal();
+      navigate('/groups');
     },
     onError: (error) => {
       if (axios.isAxiosError(error) || error instanceof Error) {
@@ -187,9 +188,9 @@ function GroupDetailPage() {
   });
 
   const handleDeleteGroup = () => {
-    console.log('delete group');
+    deleteGroupMutation.mutate({ isDelete: true });
   };
-  
+
   if (isLoading) {
     return (
       <AppLayout>

@@ -1,27 +1,53 @@
 import { GroupByUser } from 'models';
-import React, { useState } from 'react';
-// eslint-disable-next-line no-unused-vars
-import { Button, Card, Row, Modal } from 'react-bootstrap';
+import React from 'react';
+import { Button, Card, Row } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { FaTrashAlt } from 'react-icons/fa';
+import CustomModal from 'components/Common/CustomModal/CustomModal';
+import { useModal } from 'hooks';
+import { toast } from 'react-toastify';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import config from 'config';
+import { axiosWithToken } from 'utils';
+import axios, { AxiosResponse } from 'axios';
 
 interface GroupItemProps {
   data: GroupByUser;
-  // eslint-disable-next-line no-unused-vars
-  // onRemoveGroup: (index: number) => void;
 }
 
 const GroupItem: React.FC<GroupItemProps> = ({ data }) => {
+  const queryClient = useQueryClient();
   const navigate = useNavigate();
 
   const navigateToGroup = () => {
     navigate(`/groups/${data.group.id}`);
   };
 
-  const [show, setShow] = useState(false);
+  const deleteGroupModal = useModal();
 
-  const handleCloseCofirmDelete = () => setShow(false);
-  const handleShowCofirmDelete = () => setShow(true);
+  const deleteGroupMutation = useMutation({
+    mutationFn: (deleteData: { isDelete: boolean }) =>
+      axiosWithToken.put(`${config.apiUrl}/groups/setDeleteGroup`, {
+        groupId: data.group.id,
+        isDelete: deleteData.isDelete,
+      }),
+    onSuccess: (res: AxiosResponse) => {
+      toast.success(res.data.message);
+      queryClient.invalidateQueries({ queryKey: ['groupList'] });
+      deleteGroupModal.closeModal();
+    },
+    onError: (error) => {
+      if (axios.isAxiosError(error) || error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error(String(error));
+      }
+    },
+  });
+
+  const handleDeleteGroup = () => {
+    deleteGroupMutation.mutate({ isDelete: true });
+  };
 
   return (
     <>
@@ -48,26 +74,22 @@ const GroupItem: React.FC<GroupItemProps> = ({ data }) => {
               <FaTrashAlt
                 className="mr-auto"
                 id={data.group.id.toString()}
-                // eslint-disable-next-line no-console
-                onClick={handleShowCofirmDelete}
+                onClick={deleteGroupModal.openModal}
               />
             </Card.Body>
           </div>
         </Row>
       </Card>
-      <Modal show={show} onHide={handleCloseCofirmDelete} backdrop="static" centered>
-        <Modal.Header closeButton> Delete {data.group.name}?
-        </Modal.Header>
-        <Modal.Body>You cannot undo this action</Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseCofirmDelete}>
-            Cancel
-          </Button>
-          <Button variant="danger" onClick={handleCloseCofirmDelete}>
-            Delete
-          </Button>
-        </Modal.Footer>
-      </Modal>
+      <CustomModal
+        isShowModal={deleteGroupModal.isShowModal}
+        closeModal={deleteGroupModal.closeModal}
+        titleText={'Confirm delete group'}
+        bodyText={`Are you sure you want to delete  ${data.group.name}?`}
+        cancelModal={deleteGroupModal.closeModal}
+        isDisableConfirm={deleteGroupMutation.isLoading}
+        confirmText={'Delete'}
+        confirmClick={handleDeleteGroup}
+      />
     </>
   );
 };
