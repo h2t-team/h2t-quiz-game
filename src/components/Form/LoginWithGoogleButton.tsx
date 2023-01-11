@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { Button, Alert } from 'react-bootstrap';
 import axios from 'axios';
 import { CodeResponse, useGoogleLogin } from '@react-oauth/google';
@@ -11,7 +11,6 @@ import styles from './Form.module.scss';
 
 const LoginWithGoogleButton = () => {
   const [errMsg, setErrMsg] = React.useState('');
-  const navigate = useNavigate();
   const [search] = useSearchParams();
   const redirect = search.get('redirect');
   const mutation = useMutation({
@@ -29,7 +28,7 @@ const LoginWithGoogleButton = () => {
       if (redirect) {
         window.location.assign(redirect);
       } else {
-        navigate('/');
+        window.location.assign('/');
       }
     },
     onError: (error) => {

@@ -65,7 +65,7 @@ const Login = () => {
         if (redirect) {
           window.location.assign(redirect);
         } else {
-          naviagte('/');
+          window.location.assign('/');
         }
       } else {
         const email = data.data?.email;

@@ -87,6 +87,7 @@ function GroupDetailPage() {
       );
       return res.data.presentation as PresentationInfo;
     },
+    retry: false,
   });
 
   const addUserMutation = useMutation({
@@ -121,6 +122,7 @@ function GroupDetailPage() {
       toast.success(res.data.message);
       queryClient.invalidateQueries({ queryKey: ['groupDetail'] });
       kickUserModal.closeModal();
+      updateUserModal.closeModal();
     },
     onError: (error) => {
       if (axios.isAxiosError(error) || error instanceof Error) {
@@ -187,7 +189,7 @@ function GroupDetailPage() {
   const handleDeleteGroup = () => {
     console.log('delete group');
   };
-
+  
   if (isLoading) {
     return (
       <AppLayout>
@@ -245,7 +247,7 @@ function GroupDetailPage() {
             {/* Check current user role = owner ? */}
             <Button
               variant="danger"
-              onClick={kickUserModal.openModal}
+              onClick={deleteGroupModal.openModal}
               className="mb-4 ms-2 fw-semibold"
             >
               Delete group

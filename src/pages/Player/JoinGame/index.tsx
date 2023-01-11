@@ -51,9 +51,12 @@ const JoinGame = () => {
     },
     onSuccess: async (data) => {
       try {
-        await axiosWithToken.get(
-          `groups/${data.data?.presentation.groupId}/check-user`
-        );
+        const groupId = data.data?.presentation.groupId;
+        if(groupId) {
+          await axiosWithToken.get(
+            `groups/${data.data?.presentation.groupId}/check-user`
+          );
+        }
         if (data.data?.presentation.isPresent) {
           nav(`/${data.data?.presentation.id}/0/answer`);
         } else {
