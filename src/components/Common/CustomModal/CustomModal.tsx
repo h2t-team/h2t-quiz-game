@@ -13,6 +13,7 @@ interface CustomModalProps {
   isDisableConfirm: boolean;
   confirmText: string;
   confirmClick?: () => void;
+  confirmVariant: string;
 }
 
 const CustomModal: React.FC<CustomModalProps> = ({
@@ -26,6 +27,7 @@ const CustomModal: React.FC<CustomModalProps> = ({
   isDisableConfirm,
   confirmText,
   confirmClick,
+  confirmVariant
 }) => {
   const formModal = (
     <>
@@ -35,7 +37,7 @@ const CustomModal: React.FC<CustomModalProps> = ({
           <Button variant="secondary" onClick={cancelModal}>
             Cancel
           </Button>
-          <Button variant="primary" type="submit" disabled={isDisableConfirm}>
+          <Button variant={confirmVariant} type="submit" disabled={isDisableConfirm}>
             {isDisableConfirm ? <Loader size="sm" /> : confirmText}
           </Button>
         </Modal.Footer>
@@ -50,7 +52,7 @@ const CustomModal: React.FC<CustomModalProps> = ({
           Cancel
         </Button>
         <Button
-          variant="primary"
+          variant={confirmVariant}
           onClick={confirmClick}
           disabled={isDisableConfirm}
         >

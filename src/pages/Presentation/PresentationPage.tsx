@@ -89,10 +89,6 @@ function PresentationPage() {
     closeModal();
   };
 
-  const handleRemovePresentation = (presentation: { name: any }) => {
-    alert(`Not implemented for removing presentation ${presentation.name} yet`);
-  };
-
   if (isLoading) {
     return (
       <AppLayout>
@@ -124,10 +120,7 @@ function PresentationPage() {
             <Form.Control type="search" placeholder="Type to search" />
           </Form>
         </div>
-        <PresentationList
-          list={data.presentations}
-          onRemovePresentation={handleRemovePresentation}
-        />
+        <PresentationList list={data.presentations} />
         <Modal
           size="lg"
           aria-labelledby="create-presentation"
