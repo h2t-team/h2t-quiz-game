@@ -21,6 +21,7 @@ import {
   ResetPasswordPage,
 } from 'pages';
 import PrivateRoute from 'components/PrivateRoute/PrivateRoute';
+import WithPlayerSlideShow from 'pages/Player/PlayerSlideShow/WithPlayerSlideShow';
 
 const editPresentationRouteList = [
   '/presentations/:presentationId/edit',
@@ -122,7 +123,7 @@ const route: RouteObject[] = [
     path: '/:presentId/:slideIndex/result',
     element: (
       <PrivateRoute>
-        <Result />
+        <WithPlayerSlideShow component={Result} />
       </PrivateRoute>
     ),
   },
@@ -138,7 +139,7 @@ const route: RouteObject[] = [
     path: '/:presentId/:slideIndex/answer',
     element: (
       <PrivateRoute>
-        <Answer />
+        <WithPlayerSlideShow component={Answer} />
       </PrivateRoute>
     ),
   },

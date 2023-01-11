@@ -23,7 +23,7 @@ const schema = yup
   })
   .required();
 
-const Answer = () => {
+const Answer: React.FC = () => {
   const {
     globalState: { socket },
   } = useContext(StoreContext);
@@ -46,22 +46,22 @@ const Answer = () => {
     undefined
   );
   const nav = useNavigate();
+
   useEffect(() => {
     socket.emit('join room', presentId);
-    
+
     socket.on('join room', (msg) => {
       // eslint-disable-next-line no-console
       console.log(msg);
     });
-    
+
     socket.on('change slide', ({ slideIndex }) => {
       nav(`/${presentId}/${slideIndex}/answer`);
     });
-    
+
     socket.on('end slide', () => {
       nav('/join-game');
     });
-
 
     return () => {
       socket.off('join room');

@@ -1,15 +1,17 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Button, Container } from 'react-bootstrap';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
-
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Chart, ChartType } from 'components/Chart';
-import { Loader } from 'components/Common';
+import { Loader, SlideShowMenu } from 'components/Common';
 import { axiosWithToken } from 'utils';
 import logo from 'asset/images/logo.svg';
 import styles from './SlideShow.module.scss';
 import { Presentation, Slide } from 'models/presentation.model';
 import { StoreContext } from 'store';
+import { useModal } from 'hooks';
+import QAModal from 'components/Modal/QAModal';
+import ChatModal from 'components/Modal/ChatModal';
 
 interface ChartData {
   name: string;
@@ -17,12 +19,15 @@ interface ChartData {
 }
 
 const SlideShow = () => {
+  const queryClient = useQueryClient();
   const {
     globalState: { socket },
   } = useContext(StoreContext);
   const [chartData, setChartData] = useState<ChartData[]>([]);
   const [currentSlide, setCurrentSlide] = useState<Slide>();
   const { presentId, slideIndex } = useParams();
+  const qaModal = useModal();
+  const chatModal = useModal();
   const nav = useNavigate();
   const slideData = useQuery({
     queryKey: ['presentation', presentId],
@@ -173,6 +178,21 @@ const SlideShow = () => {
     }
   };
 
+  const markQuestionAnswered = (questionId: string) => {
+    socket.emit('mark question answered', {
+      roomId: presentId,
+      questionId,
+    });
+  };
+
+  useEffect(() => {
+    socket.on('marked question answered', () => {
+      queryClient.invalidateQueries({
+        queryKey: ['slideshow-questions'],
+      });
+    });
+  });
+
   if (slideData.isLoading) {
     return <Loader isFullPage />;
   }
@@ -197,7 +217,7 @@ const SlideShow = () => {
           )
         )}
 
-        <div className="d-flex justify-content-between mt-auto">
+        <div className="d-flex justify-content-between mt-auto mb-5">
           <Button variant="primary" onClick={prevSlide}>
             Prev
           </Button>
@@ -205,7 +225,21 @@ const SlideShow = () => {
             Next
           </Button>
         </div>
+        <SlideShowMenu
+          openChatModal={chatModal.openModal}
+          openQaModal={qaModal.openModal}
+        />
       </Container>
+      <QAModal
+        isShowModal={qaModal.isShowModal}
+        closeModal={qaModal.closeModal}
+        presentationId={presentId as string}
+        markQuestionAnswered={markQuestionAnswered}
+      />
+      <ChatModal
+        isShowModal={chatModal.isShowModal}
+        closeModal={chatModal.closeModal}
+      />
     </div>
   );
 };
