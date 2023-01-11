@@ -10,31 +10,11 @@ function Footer() {
         <Row>
           <Col>
             <h2>About us</h2>
-            <p>Lorem</p>
-            <p>Lorem</p>
-            <p>Lorem</p>
-            <p>Lorem</p>
+            <p>H2T Team</p>
           </Col>
           <Col>
             <h2>Contact</h2>
-            <p>Lorem</p>
-            <p>Lorem</p>
-            <p>Lorem</p>
-            <p>Lorem</p>
-          </Col>
-          <Col>
-            <h2>Contact</h2>
-            <p>Lorem</p>
-            <p>Lorem</p>
-            <p>Lorem</p>
-            <p>Lorem</p>
-          </Col>
-          <Col>
-            <h2>Contact</h2>
-            <p>Lorem</p>
-            <p>Lorem</p>
-            <p>Lorem</p>
-            <p>Lorem</p>
+            <p>Email: h2tservice123@gmail.com</p>
           </Col>
         </Row>
         <Row className="justify-content-center mt-5">

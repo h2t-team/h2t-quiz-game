@@ -1,7 +1,7 @@
 import React from 'react';
 import { Col, Container, Form, Button, Alert } from 'react-bootstrap';
 import { useMutation } from '@tanstack/react-query';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
@@ -23,6 +23,7 @@ const schema = yup
   .required();
 
 const JoinGame = () => {
+  const [search] = useSearchParams();
   const nav = useNavigate();
   const [errMsg, setErrMsg] = React.useState('');
   const {
@@ -31,6 +32,9 @@ const JoinGame = () => {
     formState: { errors },
   } = useForm<IFormInput>({
     resolver: yupResolver(schema),
+    defaultValues: {
+      pin: search.get('code') || '',
+    },
     reValidateMode: 'onChange',
   });
 
@@ -45,12 +49,27 @@ const JoinGame = () => {
         );
       }
     },
-    onSuccess: (data) => {
-      nav(`/${data.data?.presentation.id}/1/answer`);
+    onSuccess: async (data) => {
+      try {
+        const groupId = data.data?.presentation.groupId;
+        if(groupId) {
+          await axiosWithToken.get(
+            `groups/${data.data?.presentation.groupId}/check-user`
+          );
+        }
+        if (data.data?.presentation.isPresent) {
+          nav(`/${data.data?.presentation.id}/0/answer`);
+        } else {
+          setErrMsg('The game does not exist.');
+        }
+      } catch (error) {
+        setErrMsg('You don not have permission to join this game.');
+      }
     },
   });
 
   const onSubmit: SubmitHandler<IFormInput> = (data) => {
+    setErrMsg('');
     mutation.mutate(data);
   };
 
@@ -61,7 +80,7 @@ const JoinGame = () => {
           <img src={logo} alt="H2T" />
         </div>
         <Col className={styles.joinForm}>
-          <Alert variant="danger" show={mutation.isError}>
+          <Alert variant="danger" show={mutation.isError || !!errMsg}>
             {errMsg}
           </Alert>
           <Form onSubmit={handleSubmit(onSubmit)}>

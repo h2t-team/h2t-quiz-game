@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
-import styles from './Activation.module.scss';
 import axios from 'axios';
 import config from 'config';
+import { Loader } from 'components/Common';
+import UpdateAccountLayout from 'components/Layouts/UpdateAccountLayout';
+import styles from 'components/Layouts/UpdateAccountLayout/UpdateAccountLayout.module.scss';
 
 const ActivationPage = () => {
   const [message, setMessage] = useState('');
   const [result, setResult] = useState(true);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const getMutation = useMutation({
     mutationFn: (token: string) =>
@@ -17,6 +20,7 @@ const ActivationPage = () => {
       const message = data.data?.message;
       setMessage(message);
       setResult(true);
+      setLoading(false);
     },
     onError: (error) => {
       if (axios.isAxiosError(error)) {
@@ -25,6 +29,7 @@ const ActivationPage = () => {
             'There was a problem with server. Please try again later.'
         );
         setResult(false);
+        setLoading(false);
       }
     },
   });
@@ -35,6 +40,7 @@ const ActivationPage = () => {
       navigate('/send-email', {
         state: {
           email: newData.data.email,
+          type: 'Activation',
         },
       });
     },
@@ -45,6 +51,7 @@ const ActivationPage = () => {
             'There was a problem with server. Please try again later.'
         );
         setResult(false);
+        setLoading(false);
       }
     },
   });
@@ -57,10 +64,11 @@ const ActivationPage = () => {
     } else {
       setMessage('Invalid Token');
       setResult(false);
+      setLoading(false);
     }
   }, []);
 
-  const handleAnchorClick = (event: React.MouseEvent<HTMLElement>) => {
+  const handleResendClick = (event: React.MouseEvent<HTMLElement>) => {
     event.preventDefault();
     const params = new URLSearchParams(window.location.search);
     if (params.has('token')) {
@@ -74,40 +82,51 @@ const ActivationPage = () => {
 
   const successBlock = (
     <>
-      <FaCheckCircle className="mb-5" color="green" size="60px" />
-      <p className="mb-3"> {message} </p>
-      <Link to="/" className="btn btn-primary mt-3 w-100">
-        BACK TO HOME
-      </Link>
+      <div className={styles.center}>
+        <FaCheckCircle className="mb-3" color="green" size="60px" />
+        <p> {message} </p>
+      </div>
     </>
   );
 
   const errorBlock = (
     <>
-      <FaTimesCircle color="red" size="50px" />
-      <p className="mb-3"> {message} </p>
-      <>
-        Want to receive activate email again? Click on{' '}
-        <a
-          onClick={handleAnchorClick}
-          href="/"
-          className="fw-bold text-decoration-underline"
-        >
-          Resend
-        </a>
-      </>
-      <Link to="/" className="btn btn-primary mt-3 w-100">
-        BACK TO HOME
-      </Link>
+      <div className={styles.center}>
+        <FaTimesCircle className="mb-3" color="red" size="50px" />
+        <p> {message} </p>
+
+        <p className="mt-5">
+          Want to receive activate email again? Click on{' '}
+          <a
+            onClick={handleResendClick}
+            href="/"
+            className="fw-bold text-decoration-underline"
+          >
+            Resend
+          </a>
+        </p>
+      </div>
     </>
   );
 
-  return (
-    <div className={styles.activationPage}>
-      <div className={styles.activation}>
-        {result ? successBlock : errorBlock}
+  const loadingBlock = (
+    <>
+      <div className={styles.center}>
+        <Loader
+          as="span"
+          isFullPage={false}
+          animation="border"
+          size="sm"
+          role="status"
+          className="me-2"
+        />
       </div>
-    </div>
+    </>
+  );
+  return (
+    <UpdateAccountLayout>
+      {loading ? loadingBlock : result ? successBlock : errorBlock}
+    </UpdateAccountLayout>
   );
 };
 

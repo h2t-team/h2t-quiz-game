@@ -17,14 +17,17 @@ import {
   Answer,
   SlideShow,
   PresentationDetailPage,
+  ForgotPasswordPage,
+  ResetPasswordPage,
 } from 'pages';
 import PrivateRoute from 'components/PrivateRoute/PrivateRoute';
+import WithPlayerSlideShow from 'pages/Player/PlayerSlideShow/WithPlayerSlideShow';
 
 const editPresentationRouteList = [
   '/presentations/:presentationId/edit',
-  '/presentations/:presentationId/:slideId/edit',
+  '/presentations/:presentationId/:slideIndex/edit',
   '/presentations/:presentationId',
-  '/presentations/:presentationId/:slideId',
+  '/presentations/:presentationId/:slideIndex',
 ].map((path) => ({
   path,
   element: (
@@ -53,12 +56,20 @@ const route: RouteObject[] = [
     element: <RegisterPage />,
   },
   {
+    path: '/forgot-password',
+    element: <ForgotPasswordPage />,
+  },
+  {
     path: '/send-email',
     element: <SendEmailPage />,
   },
   {
     path: '/auth/activate-account',
     element: <ActivationPage />,
+  },
+  {
+    path: '/auth/reset-password',
+    element: <ResetPasswordPage />,
   },
   {
     path: '/groups/invite/:groupId',
@@ -109,15 +120,15 @@ const route: RouteObject[] = [
     ),
   },
   {
-    path: '/:presentId/:slideId/result',
+    path: '/:presentId/:slideIndex/result',
     element: (
       <PrivateRoute>
-        <Result />
+        <WithPlayerSlideShow component={Result} />
       </PrivateRoute>
     ),
   },
   {
-    path: '/:presentId/:slideId/show',
+    path: '/:presentId/:slideIndex/show',
     element: (
       <PrivateRoute>
         <SlideShow />
@@ -125,10 +136,10 @@ const route: RouteObject[] = [
     ),
   },
   {
-    path: '/:presentId/:slideId/answer',
+    path: '/:presentId/:slideIndex/answer',
     element: (
       <PrivateRoute>
-        <Answer />
+        <WithPlayerSlideShow component={Answer} />
       </PrivateRoute>
     ),
   },

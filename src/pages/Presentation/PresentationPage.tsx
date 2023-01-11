@@ -4,7 +4,7 @@ import { Button, ButtonGroup, Form, Modal } from 'react-bootstrap';
 import { AiOutlinePlus } from 'react-icons/ai';
 import PresentationList from 'components/Presentation/PresentationList';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { axiosWithToken, getItem } from 'utils';
+import { axiosWithToken } from 'utils';
 import { Loader } from 'components/Common';
 import { useModal } from 'hooks';
 import { useForm } from 'react-hook-form';
@@ -12,9 +12,12 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import axios from 'axios';
 import config from 'config';
+import { toast } from 'react-toastify';
+import { GroupByUser } from 'models';
 
 type NewPresentationInputs = {
   presentationName: string;
+  groupId?: string;
 };
 
 const schema = yup.object().shape({
@@ -23,6 +26,7 @@ const schema = yup.object().shape({
     .required('Presentation name is required')
     .min(3, 'Presentation name must be at least 3 characters')
     .max(32, 'Presentation name must not exceed 32 characters'),
+  groupId: yup.string(),
 });
 
 function PresentationPage() {
@@ -47,26 +51,34 @@ function PresentationPage() {
     },
   });
 
+  const groupList = useQuery({
+    queryKey: ['groupList'],
+    queryFn: async (): Promise<GroupByUser[]> => {
+      const res = await axiosWithToken.get(`${config.apiUrl}/groups`);
+      return res.data.groups;
+    },
+  });
+
   const mutation = useMutation({
-    mutationFn: (data: NewPresentationInputs) =>
-      axios.post(
-        `${config.apiUrl}/presentation`,
-        {
-          name: data.presentationName,
-        },
-        {
-          headers: {
-            authorization: `Bearer ${getItem('h2t_access_token')}`,
-          },
-        }
-      ),
+    mutationFn: (data: NewPresentationInputs) => {
+      const postBody: { name: string; groupId?: string } = {
+        name: data.presentationName,
+      };
+
+      if (data.groupId) {
+        postBody.groupId = data.groupId;
+      }
+
+      return axiosWithToken.post('/presentation', postBody);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['presentationList'] });
     },
     onError: (error) => {
-      if (axios.isAxiosError(error)) {
-        // TODO: toast the error
-        alert(error);
+      if (axios.isAxiosError(error) || error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error(String(error));
       }
     },
   });
@@ -75,10 +87,6 @@ function PresentationPage() {
     mutation.mutate(data);
     reset();
     closeModal();
-  };
-
-  const handleRemovePresentation = (presentation: { name: any }) => {
-    alert(`Not implemented for removing presentation ${presentation.name} yet`);
   };
 
   if (isLoading) {
@@ -112,10 +120,7 @@ function PresentationPage() {
             <Form.Control type="search" placeholder="Type to search" />
           </Form>
         </div>
-        <PresentationList
-          list={data.presentations}
-          onRemovePresentation={handleRemovePresentation}
-        />
+        <PresentationList list={data.presentations} />
         <Modal
           size="lg"
           aria-labelledby="create-presentation"
@@ -141,6 +146,17 @@ function PresentationPage() {
                 <Form.Control.Feedback type="invalid">
                   {errors.presentationName?.message}
                 </Form.Control.Feedback>
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Group:</Form.Label>
+                <Form.Select {...register('groupId')}>
+                  <option value="">Public Presentation</option>
+                  {groupList.data?.map((item, index) => (
+                    <option key={index} value={item.group.id}>
+                      {item.group.name}
+                    </option>
+                  ))}
+                </Form.Select>
               </Form.Group>
             </Modal.Body>
             <Modal.Footer>

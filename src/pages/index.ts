@@ -14,6 +14,8 @@ import Answer from './Player/Answer';
 import Result from './Player/Result';
 import SlideShow from './Presentation/SlideShow';
 import PresentationDetailPage from './Presentation/PresentationDetailPage';
+import ForgotPasswordPage from './Auth/ForgotPasswordPage';
+import ResetPasswordPage from './Auth/ResetPasswordPage';
 
 export {
   GroupDetailPage,
@@ -32,4 +34,6 @@ export {
   Result,
   SlideShow,
   PresentationDetailPage,
+  ForgotPasswordPage,
+  ResetPasswordPage,
 };

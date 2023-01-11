@@ -1,28 +1,37 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Button, Container } from 'react-bootstrap';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
-import io from 'socket.io-client';
-
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Chart, ChartType } from 'components/Chart';
-import { Loader } from 'components/Common';
+import { Loader, SlideShowMenu } from 'components/Common';
 import { axiosWithToken } from 'utils';
 import logo from 'asset/images/logo.svg';
 import styles from './SlideShow.module.scss';
-import config from 'config';
-import { Presentation, Slide } from 'models/presentation.model';
+import { Message, Presentation, Slide } from 'models/presentation.model';
+import { StoreContext } from 'store';
+import { useModal } from 'hooks';
+import QAModal from 'components/Modal/QAModal';
+import ChatModal from 'components/Modal/ChatModal';
+import { v4 as uuidv4 } from 'uuid';
 
 interface ChartData {
   name: string;
   value: number;
 }
 
-const socket = io(config.apiUrl);
-
 const SlideShow = () => {
+  const queryClient = useQueryClient();
+  const {
+    globalState: { socket },
+  } = useContext(StoreContext);
   const [chartData, setChartData] = useState<ChartData[]>([]);
   const [currentSlide, setCurrentSlide] = useState<Slide>();
-  const { presentId, slideId } = useParams();
+  const [messageList, setMessageList] = useState<Message[]>([]);
+  const [isCheckedNoti, setIsCheckedNoti] = useState<boolean>(false);
+  
+  const { presentId, slideIndex } = useParams();
+  const qaModal = useModal();
+  const chatModal = useModal();
   const nav = useNavigate();
   const slideData = useQuery({
     queryKey: ['presentation', presentId],
@@ -32,17 +41,35 @@ const SlideShow = () => {
     },
   });
 
+  const userInfo = useQuery({
+    queryKey: ['userInfo'],
+    queryFn: async () => {
+      const res = await axiosWithToken.get('/user');
+      return res.data;
+    },
+  });
+
   useEffect(() => {
-    socket.on('connect', () => {
-      // eslint-disable-next-line no-console
-      console.log('Socket connected');
+    socket.on('receive message', ({ messageText, username }: { messageText: string, username: string }) => {
+      if (!chatModal.isShowModal) {
+        setIsCheckedNoti(true);
+      }
+
+      setMessageList(prev => 
+        [...prev, { 
+          text: messageText, 
+          username, 
+          id: uuidv4() 
+        }]
+      )
     });
 
-    socket.on('disconnect', () => {
-      // eslint-disable-next-line no-console
-      console.log('Socket disconnect');
-    });
+    return () => {
+      socket.off('receive message');
+    };
+  });
 
+  useEffect(() => {
     socket.emit('join room', presentId);
 
     socket.on('join room', (msg) => {
@@ -50,12 +77,17 @@ const SlideShow = () => {
       console.log(msg);
     });
 
+    socket.on('stop present', async () => {
+      await Promise.all([saveOption(), endPresent()]);
+      socket.emit('end slide', { roomId: presentId });
+      nav(`/presentations/${presentId}/${slideIndex}/edit`, { replace: true });
+    });
+
     return () => {
-      socket.off('connect');
-      socket.off('disconnect');
       socket.off('join room');
+      socket.off('stop present');
     };
-  }, [presentId, slideId]);
+  }, [presentId, slideIndex]);
 
   useEffect(() => {
     socket.on('update info receive', ({ optionId }) => {
@@ -73,7 +105,7 @@ const SlideShow = () => {
 
     socket.on('get data', () => {
       socket.emit('receive data', {
-        slideId,
+        slideIndex,
         data: chartData,
         roomId: presentId,
       });
@@ -87,7 +119,7 @@ const SlideShow = () => {
 
   useEffect(() => {
     const curSlide = slideData.data?.slides.find(
-      (item) => item.id.toString() === slideId
+      (item) => item.index.toString() === slideIndex
     );
     if (curSlide) {
       const data = curSlide.pollSlides.map((item) => {
@@ -100,11 +132,11 @@ const SlideShow = () => {
       setCurrentSlide(curSlide);
       setChartData(data);
     }
-  }, [slideData.isSuccess, slideId]);
+  }, [slideData.data, slideIndex]);
 
   useEffect(() => {
     socket.emit('receive data', {
-      slideId,
+      slideIndex,
       data: chartData,
       roomId: presentId,
     });
@@ -125,10 +157,22 @@ const SlideShow = () => {
     }
   };
 
-  const changeSlideSocketEvent = (slideId: number) => {
+  const endPresent = async () => {
+    try {
+      return await axiosWithToken.patch('/presentation', {
+        isPresent: false,
+        id: presentId,
+      });
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.log(error);
+    }
+  };
+
+  const changeSlideSocketEvent = (slideIndex: number) => {
     socket.emit('change slide', {
       roomId: presentId,
-      slideId,
+      slideIndex,
     });
   };
 
@@ -140,9 +184,10 @@ const SlideShow = () => {
       socket.emit('end slide', {
         roomId: presentId,
       });
-      nav(`/presentations/${presentId}/${slideId}`, { replace: true });
+      await endPresent();
+      nav(`/presentations/${presentId}/${slideIndex}/edit`, { replace: true });
     } else {
-      const nextIndex = slideData.data?.slides[index + 1].id as number;
+      const nextIndex = index + 1;
       changeSlideSocketEvent(nextIndex);
       nav(`/${presentId}/${nextIndex}/show`);
     }
@@ -153,16 +198,49 @@ const SlideShow = () => {
     const index = currentSlide?.index || 0;
     const isFirst = index === 0;
     if (!isFirst) {
-      const prevIndex = slideData.data?.slides[index - 1].id as number;
+      const prevIndex = index - 1;
       changeSlideSocketEvent(prevIndex);
       nav(`/${presentId}/${prevIndex}/show`);
     } else {
       socket.emit('end slide', {
         roomId: presentId,
       });
-      nav(`/presentations/${presentId}/${slideId}`, { replace: true });
+      await endPresent();
+      nav(`/presentations/${presentId}/${slideIndex}/edit`, { replace: true });
     }
   };
+
+  const markQuestionAnswered = (questionId: string) => {
+    socket.emit('mark question answered', {
+      roomId: presentId,
+      questionId,
+    });
+  };
+
+  useEffect(() => {
+    socket.on('marked question answered', () => {
+      queryClient.invalidateQueries({
+        queryKey: ['slideshow-questions'],
+      });
+    });
+  });
+
+  const handleAddMessage = (messageText: string) => {
+    if (!messageText) {
+      return;
+    }
+
+    socket.emit('send message', {
+      roomId: presentId,
+      messageText,
+      username: userInfo.data?.user?.fullname as string
+    })
+  }
+
+  const openChatModal = () => {
+    setIsCheckedNoti(false);
+    chatModal.openModal();
+  }
 
   if (slideData.isLoading) {
     return <Loader isFullPage />;
@@ -170,14 +248,25 @@ const SlideShow = () => {
 
   return (
     <div className={styles.slideShowPage}>
-      <Container>
-        <h1 className={styles.question}>
-          {currentSlide?.title} <img src={logo} alt="H2T" height="40" />
-        </h1>
-        <div className={styles.chart}>
-          <Chart type={ChartType.barChartType} data={chartData}></Chart>
-        </div>
-        <div className="d-flex justify-content-between">
+      <Container className="d-flex flex-column h-100">
+        {currentSlide?.type === 'heading' ? (
+          <h1 className={styles.heading}>{currentSlide?.title}</h1>
+        ) : (
+          <h1 className={styles.question}>
+            {currentSlide?.title} <img src={logo} alt="H2T" height="50" />
+          </h1>
+        )}
+        {currentSlide?.type === 'poll' ? (
+          <div className={styles.chart}>
+            <Chart type={ChartType.barChartType} data={chartData}></Chart>
+          </div>
+        ) : (
+          currentSlide?.type === 'paragraph' && (
+            <div className={styles.paragraph}>{currentSlide?.paragraph}</div>
+          )
+        )}
+
+        <div className="d-flex justify-content-between mt-auto mb-5">
           <Button variant="primary" onClick={prevSlide}>
             Prev
           </Button>
@@ -185,7 +274,24 @@ const SlideShow = () => {
             Next
           </Button>
         </div>
+        <SlideShowMenu
+          openChatModal={openChatModal}
+          openQaModal={qaModal.openModal}
+          isCheckedNoti={isCheckedNoti}
+        />
       </Container>
+      <QAModal
+        isShowModal={qaModal.isShowModal}
+        closeModal={qaModal.closeModal}
+        presentationId={presentId as string}
+        markQuestionAnswered={markQuestionAnswered}
+      />
+      <ChatModal
+        isShowModal={chatModal.isShowModal}
+        closeModal={chatModal.closeModal}
+        messageList={messageList}
+        handleAddMessage={handleAddMessage}
+      />
     </div>
   );
 };

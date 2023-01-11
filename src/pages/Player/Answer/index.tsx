@@ -1,8 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import io from 'socket.io-client';
+import React, { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { axiosWithToken } from 'utils';
-import config from 'config';
 import { Container, Form, Button } from 'react-bootstrap';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -13,18 +11,22 @@ import styles from './Answer.module.scss';
 import { useQuery } from '@tanstack/react-query';
 import { Loader } from 'components/Common';
 import { Presentation, Slide } from 'models/presentation.model';
+import { StoreContext } from 'store';
 
-const socket = io(config.apiUrl);
 interface IFormInput {
   answer: string;
 }
+
 const schema = yup
   .object({
     answer: yup.string().required('Please choose an option'),
   })
   .required();
 
-const Answer = () => {
+const Answer: React.FC = () => {
+  const {
+    globalState: { socket },
+  } = useContext(StoreContext);
   const {
     register,
     handleSubmit,
@@ -32,7 +34,7 @@ const Answer = () => {
   } = useForm<IFormInput>({
     resolver: yupResolver(schema),
   });
-  const { presentId, slideId } = useParams();
+  const { presentId, slideIndex } = useParams();
   const slideData = useQuery({
     queryKey: ['presentation', presentId],
     queryFn: async (): Promise<Presentation> => {
@@ -43,17 +45,9 @@ const Answer = () => {
   const [currentSlide, setCurrentSlide] = useState<Slide | undefined>(
     undefined
   );
-  const [, setIsConnected] = useState(socket.connected);
   const nav = useNavigate();
+
   useEffect(() => {
-    socket.on('connect', () => {
-      setIsConnected(true);
-    });
-
-    socket.on('disconnect', () => {
-      setIsConnected(false);
-    });
-
     socket.emit('join room', presentId);
 
     socket.on('join room', (msg) => {
@@ -61,26 +55,43 @@ const Answer = () => {
       console.log(msg);
     });
 
+    socket.on('change slide', ({ slideIndex }) => {
+      nav(`/${presentId}/${slideIndex}/answer`);
+    });
+
+    socket.on('end slide', () => {
+      nav('/join-game');
+    });
+
     return () => {
-      socket.off('connect');
-      socket.off('disconnect');
       socket.off('join room');
+      socket.off('change slide');
+      socket.off('end slide');
     };
-  }, [presentId, slideId]);
+  }, [presentId, slideIndex]);
 
   useEffect(() => {
     const curSlide = slideData.data?.slides.find(
-      (item) => item.id.toString() === slideId
+      (item) => item.index.toString() === slideIndex
     );
     setCurrentSlide(curSlide);
-  }, [slideData.data, slideId]);
+  }, [slideData.data, slideIndex]);
+
+  useEffect(() => {
+    if (
+      currentSlide?.type === 'heading' ||
+      currentSlide?.type === 'paragraph'
+    ) {
+      nav(`/${presentId}/${slideIndex}/result`, { replace: true });
+    }
+  }, [currentSlide]);
 
   const onSubmit: SubmitHandler<IFormInput> = (data) => {
     socket.emit('update info send', {
       roomId: presentId,
       optionId: data.answer,
     });
-    nav(`/${presentId}/${slideId}/result`, { replace: true });
+    nav(`/${presentId}/${slideIndex}/result`, { replace: true });
   };
 
   if (slideData.isLoading) {

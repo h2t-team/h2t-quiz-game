@@ -1,14 +1,21 @@
+import { useQuery } from '@tanstack/react-query';
 import React from 'react';
 import { Nav, NavDropdown } from 'react-bootstrap';
-import { Link, useNavigate, NavLink } from 'react-router-dom';
-import { clearItem, isLogin } from 'utils';
+import { Link, NavLink } from 'react-router-dom';
+import { axiosWithToken, clearItem, isLogin } from 'utils';
 
 const AppNav: React.FC = () => {
-  const navigate = useNavigate();
+  const userInfo = useQuery({
+    queryKey: ['userInfo'],
+    queryFn: async () => {
+      const res = await axiosWithToken.get('/user');
+      return res.data;
+    },
+  });
 
   const handleSignOut = () => {
     clearItem('h2t_access_token');
-    navigate('/login');
+    window.location.replace('/login');
   };
 
   return (
@@ -20,14 +27,17 @@ const AppNav: React.FC = () => {
         <Nav.Link as={NavLink} to="/groups" className="mx-2">
           Group
         </Nav.Link>
+        <Nav.Link as={NavLink} to="/presentations" className="mx-2">
+          Presentations
+        </Nav.Link>
       </Nav>
       {isLogin() ? (
         <Nav>
-          <Link to="/presentations" className="btn btn-primary mx-3 fw-bolder">
-            My Presentations
+          <Link to="/join-game" className="btn btn-primary mx-3 fw-bolder">
+            Join a game
           </Link>
           <NavDropdown
-            title="Username"
+            title={userInfo.data?.user?.fullname || 'Username'}
             id="navbarScrollingDropdown"
             className="mx-2 align-self-center"
             key="down-centered"
