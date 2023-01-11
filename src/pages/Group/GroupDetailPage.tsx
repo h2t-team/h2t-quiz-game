@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-console */
-import React, { useState } from 'react';
+import React, { ChangeEventHandler, useState } from 'react';
 import { AppLayout } from 'components/Layouts';
 import axios, { AxiosResponse } from 'axios';
 import config from 'config';
@@ -33,8 +33,10 @@ const schema = yup.object().shape({
 function GroupDetailPage() {
   const [selectedUser, setSelectedUser] =
     useState<UserPreviewWithRoleInGroup>();
+  const [selectedRole, setSelectedRole] = useState<Role>(Role.MEMBER);
   const queryClient = useQueryClient();
   const addUserModal = useModal();
+  const updateUserModal = useModal();
   const kickUserModal = useModal();
   const deleteGroupModal = useModal();
   const { groupId } = useParams();
@@ -58,6 +60,24 @@ function GroupDetailPage() {
     reset();
     addUserModal.closeModal();
   };
+
+  const userData = useQuery({
+    queryKey: ['userInGroup', groupId],
+    queryFn: async () => {
+      const res = await axiosWithToken.get(`groups/${groupId}/check-user`);
+      return res.data.user as UserPreviewWithRoleInGroup;
+    },
+  });
+
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ['groupDetail'],
+    queryFn: async () => {
+      const res = await axiosWithToken.get(
+        `${config.apiUrl}/groups/${groupId}`
+      );
+      return res.data as GroupDetail;
+    },
+  });
 
   const groupPresenting = useQuery({
     queryKey: ['groupPresenting'],
@@ -135,6 +155,15 @@ function GroupDetailPage() {
     kickUserMutation.mutateAsync({ role: Role.KICK_OUT });
   };
 
+  const handleChangeRole: ChangeEventHandler<HTMLSelectElement> = (e) => {
+    setSelectedRole(e.target.value as Role);
+    updateUserModal.openModal();
+  };
+
+  const handleChangeUserRole = () => {
+    setUserRoleMutation.mutate({ role: selectedRole });
+  };
+
   const deleteGroupMutation = useMutation({
     mutationFn: (data: { role: Role }) =>
       axiosWithToken.put(`${config.apiUrl}/groups/${groupId}/setUserRole`, {
@@ -159,16 +188,6 @@ function GroupDetailPage() {
     console.log('delete group');
   };
 
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ['groupDetail'],
-    queryFn: async () => {
-      const res = await axiosWithToken.get(
-        `${config.apiUrl}/groups/${groupId}`
-      );
-      return res.data as GroupDetail;
-    },
-  });
-  
   if (isLoading) {
     return (
       <AppLayout>
@@ -196,6 +215,7 @@ function GroupDetailPage() {
       </Form.Group>
     </>
   );
+
   return (
     <AppLayout>
       <div className="py-5">
@@ -213,23 +233,25 @@ function GroupDetailPage() {
             Go to presentation
           </Link>
         </Alert>
-        <Stack direction="horizontal" className="justify-content-end">
-          <Button
-            variant="info"
-            onClick={addUserModal.openModal}
-            className="mb-4 fw-semibold"
-          >
-            Add user
-          </Button>
-          {/* Check current user role = owner ? */}
-          <Button
-            variant="danger"
-            onClick={deleteGroupModal.openModal}
-            className="mb-4 ms-2 fw-semibold"
-          >
-            Delete group
-          </Button>
-        </Stack>
+        {userData.data?.role === Role.OWNER && (
+          <Stack direction="horizontal" className="justify-content-end">
+            <Button
+              variant="info"
+              onClick={addUserModal.openModal}
+              className="mb-4 fw-semibold"
+            >
+              Add user
+            </Button>
+            {/* Check current user role = owner ? */}
+            <Button
+              variant="danger"
+              onClick={kickUserModal.openModal}
+              className="mb-4 ms-2 fw-semibold"
+            >
+              Delete group
+            </Button>
+          </Stack>
+        )}
         <div className="mb-5">
           <h2 className="fs-3">Owner</h2>
           <hr className="border-black"></hr>
@@ -241,55 +263,45 @@ function GroupDetailPage() {
           <ListGroup>
             {data.group.userInGroups.map(
               (userInfo: UserPreviewWithRoleInGroup) =>
-                userInfo.role !== 'owner' && (
+                userInfo.role !== Role.OWNER && (
                   <ListGroup.Item
                     onClick={() => setSelectedUser(userInfo)}
                     key={userInfo.userId}
                     className="bg-secondary d-flex justify-content-between align-items-center border-0 border-bottom border-primary rounded-0 py-3"
                   >
                     <p className="fs-6 fw-semibold">{userInfo.user.fullname}</p>
-                    {/* TODO: Check the current user is the owner */}
-                    <div className="d-flex">
-                      <Form.Group className="d-flex align-items-center">
-                        <Form.Label className="mb-0">Role:</Form.Label>
-                        <Form.Select
+                    {userData.data?.role === Role.OWNER && (
+                      <div className="d-flex">
+                        <Form.Group className="d-flex align-items-center">
+                          <Form.Label className="mb-0">Role:</Form.Label>
+                          <Form.Select
+                            size="sm"
+                            defaultValue={userInfo.role}
+                            aria-label="Group role select"
+                            id={userInfo.userId}
+                            className="ms-2"
+                            onChange={handleChangeRole}
+                          >
+                            <option value={Role.CO_OWNER}>Co-owner</option>
+                            <option value={Role.MEMBER}>Member</option>
+                          </Form.Select>
+                        </Form.Group>
+                        <Button
+                          variant="danger"
                           size="sm"
-                          value={userInfo.role}
-                          aria-label="Group role select"
-                          id={userInfo.userId}
-                          className="ms-2"
-                          // Implement update role
+                          className="ms-3"
+                          onClick={() => kickUserModal.openModal()}
                         >
-                          <option value={Role.CO_OWNER}>Co-owner</option>
-                          <option value={Role.MEMBER}>Member</option>
-                        </Form.Select>
-                      </Form.Group>
-                      <Button
-                        variant="danger"
-                        size="sm"
-                        className="ms-3"
-                        onClick={() => kickUserModal.openModal()}
-                      >
-                        Kick
-                      </Button>
-                    </div>
+                          Kick
+                        </Button>
+                      </div>
+                    )}
                   </ListGroup.Item>
                 )
             )}
           </ListGroup>
         </div>
         {/* TODO: Extract Modal to Common */}
-        {/* KICK USER */}
-        <CustomModal
-          isShowModal={kickUserModal.isShowModal}
-          closeModal={kickUserModal.closeModal}
-          titleText={'Confirm kick the user'}
-          bodyText={`Are you sure you want to kick  ${selectedUser?.user.fullname}?`}
-          cancelModal={kickUserModal.closeModal}
-          isDisableConfirm={kickUserMutation.isLoading}
-          confirmText={'Kick'}
-          confirmClick={handleKickUserInGroup}
-        />
         {/* ADD USER */}
         <CustomModal
           isShowModal={addUserModal.isShowModal}
@@ -300,6 +312,28 @@ function GroupDetailPage() {
           cancelModal={handleCloseAddUserModal}
           isDisableConfirm={addUserMutation.isLoading}
           confirmText={'Add'}
+        />
+        {/* KICK USER */}
+        <CustomModal
+          isShowModal={kickUserModal.isShowModal}
+          closeModal={kickUserModal.closeModal}
+          titleText={'Confirm kick the user'}
+          bodyText={`Are you sure you want to kick ${selectedUser?.user.fullname}?`}
+          cancelModal={kickUserModal.closeModal}
+          isDisableConfirm={kickUserMutation.isLoading}
+          confirmText={'Kick'}
+          confirmClick={handleKickUserInGroup}
+        />
+        {/* SET ROLE USER */}
+        <CustomModal
+          isShowModal={updateUserModal.isShowModal}
+          closeModal={updateUserModal.closeModal}
+          titleText={'Confirm change role of user'}
+          bodyText={`Are you sure you want to change role of ${selectedUser?.user.fullname}?`}
+          cancelModal={updateUserModal.closeModal}
+          isDisableConfirm={setUserRoleMutation.isLoading}
+          confirmText={'Yes'}
+          confirmClick={handleChangeUserRole}
         />
         {/* DELETE GROUP */}
         <CustomModal
