@@ -15,7 +15,11 @@ const HomePage = () => {
             <img src={logo} alt="H2T" />
           </Col>
           <Col md={6}>
-            <h1>WELCOME TO<br/>H2T QUIZ GAME</h1>
+            <h1>
+              WELCOME TO
+              <br />
+              H2T QUIZ GAME
+            </h1>
             <Link to="/join-game" className="btn btn-primary mx-3 fw-bolder">
               Let&apos;s play now
             </Link>

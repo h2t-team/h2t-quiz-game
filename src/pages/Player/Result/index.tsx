@@ -11,7 +11,6 @@ import { Presentation, Slide } from 'models/presentation.model';
 import { axiosWithToken } from 'utils';
 import { StoreContext } from 'store';
 
-
 interface ChartData {
   name: string;
   value: number;
@@ -22,7 +21,7 @@ interface ReceiveData {
   data: ChartData[];
 }
 
-const Result = () => {
+const Result: React.FC = () => {
   const {
     globalState: { socket },
   } = useContext(StoreContext);
@@ -39,15 +38,15 @@ const Result = () => {
   const nav = useNavigate();
 
   useEffect(() => {
-    socket.emit('join room', presentId);    
-    
+    socket.emit('join room', presentId);
+
     socket.on('join room', (msg) => {
       // eslint-disable-next-line no-console
       console.log(msg);
     });
-    
+
     socket.emit('get data', { roomId: presentId });
-    
+
     socket.on('receive data', (response: ReceiveData) => {
       if (response.slideIndex.toString() !== slideIndex) {
         nav(`/${presentId}/${response.slideIndex}/answer`);
@@ -55,15 +54,15 @@ const Result = () => {
         setChartData(response.data);
       }
     });
-    
+
     socket.on('change slide', ({ slideIndex }) => {
       nav(`/${presentId}/${slideIndex}/answer`);
     });
-    
+
     socket.on('end slide', () => {
       nav('/join-game');
     });
-    
+
     return () => {
       socket.off('join room');
       socket.off('receive data');

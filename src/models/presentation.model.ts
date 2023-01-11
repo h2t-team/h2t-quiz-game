@@ -26,3 +26,11 @@ export interface Presentation {
   presentation: PresentationInfo;
   slides: Slide[];
 }
+
+export interface Question {
+  id: string;
+  question: string;
+  presentationId: string;
+  numOfVotes: number;
+  isAnswered: boolean;
+}

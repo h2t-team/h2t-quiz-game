@@ -60,7 +60,7 @@ const JoinGame = () => {
           setErrMsg('The game does not exist.');
         }
       } catch (error) {
-        setErrMsg('You don\'t have permission to join this game.');
+        setErrMsg("You don't have permission to join this game.");
       }
     },
   });

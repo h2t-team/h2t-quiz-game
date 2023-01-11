@@ -3,7 +3,7 @@ import { Socket } from 'socket.io-client';
 
 export interface GlobalStateInterface {
   testVal: string;
- socket: Socket;
+  socket: Socket;
 }
 
 export type ActionType = {
