@@ -7,11 +7,12 @@ import { Loader, SlideShowMenu } from 'components/Common';
 import { axiosWithToken } from 'utils';
 import logo from 'asset/images/logo.svg';
 import styles from './SlideShow.module.scss';
-import { Presentation, Slide } from 'models/presentation.model';
+import { Message, Presentation, Slide } from 'models/presentation.model';
 import { StoreContext } from 'store';
 import { useModal } from 'hooks';
 import QAModal from 'components/Modal/QAModal';
 import ChatModal from 'components/Modal/ChatModal';
+import { v4 as uuidv4 } from 'uuid';
 
 interface ChartData {
   name: string;
@@ -25,6 +26,9 @@ const SlideShow = () => {
   } = useContext(StoreContext);
   const [chartData, setChartData] = useState<ChartData[]>([]);
   const [currentSlide, setCurrentSlide] = useState<Slide>();
+  const [messageList, setMessageList] = useState<Message[]>([]);
+  const [isCheckedNoti, setIsCheckedNoti] = useState<boolean>(false);
+  
   const { presentId, slideIndex } = useParams();
   const qaModal = useModal();
   const chatModal = useModal();
@@ -35,6 +39,34 @@ const SlideShow = () => {
       const response = await axiosWithToken.get(`/presentation/${presentId}`);
       return response.data;
     },
+  });
+
+  const userInfo = useQuery({
+    queryKey: ['userInfo'],
+    queryFn: async () => {
+      const res = await axiosWithToken.get('/user');
+      return res.data;
+    },
+  });
+
+  useEffect(() => {
+    socket.on('receive message', ({ messageText, username }: { messageText: string, username: string }) => {
+      if (!chatModal.isShowModal) {
+        setIsCheckedNoti(true);
+      }
+
+      setMessageList(prev => 
+        [...prev, { 
+          text: messageText, 
+          username, 
+          id: uuidv4() 
+        }]
+      )
+    });
+
+    return () => {
+      socket.off('receive message');
+    };
   });
 
   useEffect(() => {
@@ -193,6 +225,23 @@ const SlideShow = () => {
     });
   });
 
+  const handleAddMessage = (messageText: string) => {
+    if (!messageText) {
+      return;
+    }
+
+    socket.emit('send message', {
+      roomId: presentId,
+      messageText,
+      username: userInfo.data?.user?.fullname as string
+    })
+  }
+
+  const openChatModal = () => {
+    setIsCheckedNoti(false);
+    chatModal.openModal();
+  }
+
   if (slideData.isLoading) {
     return <Loader isFullPage />;
   }
@@ -226,8 +275,9 @@ const SlideShow = () => {
           </Button>
         </div>
         <SlideShowMenu
-          openChatModal={chatModal.openModal}
+          openChatModal={openChatModal}
           openQaModal={qaModal.openModal}
+          isCheckedNoti={isCheckedNoti}
         />
       </Container>
       <QAModal
@@ -239,6 +289,8 @@ const SlideShow = () => {
       <ChatModal
         isShowModal={chatModal.isShowModal}
         closeModal={chatModal.closeModal}
+        messageList={messageList}
+        handleAddMessage={handleAddMessage}
       />
     </div>
   );

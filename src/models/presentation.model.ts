@@ -34,3 +34,9 @@ export interface Question {
   numOfVotes: number;
   isAnswered: boolean;
 }
+
+export interface Message {
+  id: string;
+  text: string;
+  username: string;
+}
