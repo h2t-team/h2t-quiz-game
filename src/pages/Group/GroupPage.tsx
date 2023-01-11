@@ -42,9 +42,9 @@ const GroupPage = () => {
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ['groupList'],
-    queryFn: async () => {
+    queryFn: async (): Promise<GroupByUser[]> => {
       const res = await axiosWithToken.get(`${config.apiUrl}/groups`);
-      return res.data;
+      return res.data.groups;
     },
   });
 
@@ -102,7 +102,7 @@ const GroupPage = () => {
             New group
           </Button>
         </Stack>
-        <GroupList list={data.groups as GroupByUser[]} />
+        <GroupList list={data as GroupByUser[]} />
       </div>
       {/* TODO: Extract Modal to Common */}
       <Modal

@@ -1,28 +1,33 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Button, Container } from 'react-bootstrap';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
-import io from 'socket.io-client';
-
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Chart, ChartType } from 'components/Chart';
-import { Loader } from 'components/Common';
+import { Loader, SlideShowMenu } from 'components/Common';
 import { axiosWithToken } from 'utils';
 import logo from 'asset/images/logo.svg';
 import styles from './SlideShow.module.scss';
-import config from 'config';
 import { Presentation, Slide } from 'models/presentation.model';
+import { StoreContext } from 'store';
+import { useModal } from 'hooks';
+import QAModal from 'components/Modal/QAModal';
+import ChatModal from 'components/Modal/ChatModal';
 
 interface ChartData {
   name: string;
   value: number;
 }
 
-const socket = io(config.apiUrl);
-
 const SlideShow = () => {
+  const queryClient = useQueryClient();
+  const {
+    globalState: { socket },
+  } = useContext(StoreContext);
   const [chartData, setChartData] = useState<ChartData[]>([]);
   const [currentSlide, setCurrentSlide] = useState<Slide>();
   const { presentId, slideIndex } = useParams();
+  const qaModal = useModal();
+  const chatModal = useModal();
   const nav = useNavigate();
   const slideData = useQuery({
     queryKey: ['presentation', presentId],
@@ -33,16 +38,6 @@ const SlideShow = () => {
   });
 
   useEffect(() => {
-    socket.on('connect', () => {
-      // eslint-disable-next-line no-console
-      console.log('Socket connected');
-    });
-
-    socket.on('disconnect', () => {
-      // eslint-disable-next-line no-console
-      console.log('Socket disconnect');
-    });
-
     socket.emit('join room', presentId);
 
     socket.on('join room', (msg) => {
@@ -50,10 +45,15 @@ const SlideShow = () => {
       console.log(msg);
     });
 
+    socket.on('stop present', async () => {
+      await Promise.all([saveOption(), endPresent()]);
+      socket.emit('end slide', { roomId: presentId });
+      nav(`/presentations/${presentId}/${slideIndex}/edit`, { replace: true });
+    });
+
     return () => {
-      socket.off('connect');
-      socket.off('disconnect');
       socket.off('join room');
+      socket.off('stop present');
     };
   }, [presentId, slideIndex]);
 
@@ -125,6 +125,18 @@ const SlideShow = () => {
     }
   };
 
+  const endPresent = async () => {
+    try {
+      return await axiosWithToken.patch('/presentation', {
+        isPresent: false,
+        id: presentId,
+      });
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.log(error);
+    }
+  };
+
   const changeSlideSocketEvent = (slideIndex: number) => {
     socket.emit('change slide', {
       roomId: presentId,
@@ -140,6 +152,7 @@ const SlideShow = () => {
       socket.emit('end slide', {
         roomId: presentId,
       });
+      await endPresent();
       nav(`/presentations/${presentId}/${slideIndex}/edit`, { replace: true });
     } else {
       const nextIndex = index + 1;
@@ -160,9 +173,25 @@ const SlideShow = () => {
       socket.emit('end slide', {
         roomId: presentId,
       });
+      await endPresent();
       nav(`/presentations/${presentId}/${slideIndex}/edit`, { replace: true });
     }
   };
+
+  const markQuestionAnswered = (questionId: string) => {
+    socket.emit('mark question answered', {
+      roomId: presentId,
+      questionId,
+    });
+  };
+
+  useEffect(() => {
+    socket.on('marked question answered', () => {
+      queryClient.invalidateQueries({
+        queryKey: ['slideshow-questions'],
+      });
+    });
+  });
 
   if (slideData.isLoading) {
     return <Loader isFullPage />;
@@ -188,7 +217,7 @@ const SlideShow = () => {
           )
         )}
 
-        <div className="d-flex justify-content-between mt-auto">
+        <div className="d-flex justify-content-between mt-auto mb-5">
           <Button variant="primary" onClick={prevSlide}>
             Prev
           </Button>
@@ -196,7 +225,21 @@ const SlideShow = () => {
             Next
           </Button>
         </div>
+        <SlideShowMenu
+          openChatModal={chatModal.openModal}
+          openQaModal={qaModal.openModal}
+        />
       </Container>
+      <QAModal
+        isShowModal={qaModal.isShowModal}
+        closeModal={qaModal.closeModal}
+        presentationId={presentId as string}
+        markQuestionAnswered={markQuestionAnswered}
+      />
+      <ChatModal
+        isShowModal={chatModal.isShowModal}
+        closeModal={chatModal.closeModal}
+      />
     </div>
   );
 };

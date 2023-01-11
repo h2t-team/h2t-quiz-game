@@ -8,7 +8,7 @@ const Toast = () => {
       position="bottom-center"
       autoClose={3000}
       hideProgressBar
-      closeOnClick
+      closeOnClick={false}
       pauseOnHover={false}
       theme="light"
     />

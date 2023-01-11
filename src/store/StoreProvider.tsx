@@ -1,4 +1,6 @@
+import config from 'config';
 import React, { createContext, useReducer, Dispatch } from 'react';
+import { io } from 'socket.io-client';
 import reducer from './reducer';
 import { ActionType, ContextType, GlobalStateInterface } from './types';
 
@@ -8,6 +10,7 @@ interface StoreProps {
 
 export const initState: GlobalStateInterface = {
   testVal: '',
+  socket: io(config.apiUrl),
 };
 
 export const StoreContext = createContext<ContextType>({

@@ -1,16 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Container } from 'react-bootstrap';
 import { useParams, useNavigate } from 'react-router-dom';
-import io from 'socket.io-client';
 
 import { Chart, ChartType } from 'components/Chart';
 import { Loader } from 'components/Common';
 import logo from 'asset/images/logo.svg';
 import styles from './Result.module.scss';
-import config from 'config';
 import { useQuery } from '@tanstack/react-query';
 import { Presentation, Slide } from 'models/presentation.model';
 import { axiosWithToken } from 'utils';
+import { StoreContext } from 'store';
 
 interface ChartData {
   name: string;
@@ -22,9 +21,10 @@ interface ReceiveData {
   data: ChartData[];
 }
 
-const socket = io(config.apiUrl);
-
-const Result = () => {
+const Result: React.FC = () => {
+  const {
+    globalState: { socket },
+  } = useContext(StoreContext);
   const [chartData, setChartData] = useState<ChartData[]>([]);
   const { presentId, slideIndex } = useParams();
   const slideData = useQuery({
@@ -38,16 +38,6 @@ const Result = () => {
   const nav = useNavigate();
 
   useEffect(() => {
-    socket.on('connect', () => {
-      // eslint-disable-next-line no-console
-      console.log('Socket connected');
-    });
-
-    socket.on('disconnect', () => {
-      // eslint-disable-next-line no-console
-      console.log('Socket disconnect');
-    });
-
     socket.emit('join room', presentId);
 
     socket.on('join room', (msg) => {
@@ -74,11 +64,10 @@ const Result = () => {
     });
 
     return () => {
-      socket.off('connect');
-      socket.off('disconnect');
       socket.off('join room');
       socket.off('receive data');
       socket.off('change slide');
+      socket.off('end slide');
     };
   }, []);
 
