@@ -23,6 +23,10 @@ const schema = yup
   })
   .required();
 
+interface ReceiveData {
+  slideIndex: number;
+}
+
 const Answer: React.FC = () => {
   const {
     globalState: { socket },
@@ -53,6 +57,13 @@ const Answer: React.FC = () => {
     socket.on('join room', (msg) => {
       // eslint-disable-next-line no-console
       console.log(msg);
+      socket.emit('get data', { roomId: presentId });
+    });
+
+    socket.on('receive data', (response: ReceiveData) => {
+      if (response.slideIndex.toString() !== slideIndex) {
+        nav(`/${presentId}/${response.slideIndex}/answer`);
+      }
     });
 
     socket.on('change slide', ({ slideIndex }) => {
@@ -67,6 +78,7 @@ const Answer: React.FC = () => {
       socket.off('join room');
       socket.off('change slide');
       socket.off('end slide');
+      socket.off('receive data');
     };
   }, [presentId, slideIndex]);
 

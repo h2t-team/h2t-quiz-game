@@ -46,7 +46,6 @@ const Result: React.FC = () => {
       socket.emit('get data', { roomId: presentId });
     });
 
-
     socket.on('receive data', (response: ReceiveData) => {
       if (response.slideIndex.toString() !== slideIndex) {
         nav(`/${presentId}/${response.slideIndex}/answer`);
